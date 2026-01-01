@@ -831,14 +831,18 @@
       font-size: 0.9em;
     }
     
-   /* COMPACT INPUT FIX */
 #tab-keys #deviceId,
 #tab-keys #key,
-#tab-keys #username,
-#tab-keys #expiry,
-#tab-keys #positionInput {
+#tab-keys #username{
     max-width: 360px !important;
     width: 100% !important;
+}
+#tab-keys #expiry {
+    max-width: 220px !important;
+}
+/* Only Position box slim */
+#tab-keys #positionInput {
+    max-width: 256px !important;
 }
 
 /* Mobile me aur chota */
@@ -853,6 +857,85 @@
 }.tap-copy{cursor:pointer;}
 .tap-copy span{transition:.3s;}
 .tap-copy:hover span{color:var(--accent);}
+  /* ===============================
+   NEON MATRIX HACKER THEME
+================================ */
+
+[data-theme="matrix"]{
+  --bg-primary:#030b06;
+  --bg-secondary:#021407;
+  --bg-card:#020f08;
+  --bg-input:#041b0c;
+  --bg-hover:#052410;
+
+  --accent:#00ff9c;
+  --accent-hover:#00cc7a;
+  --accent-light:rgba(0,255,156,.15);
+  --border:#0f3;
+
+  --success:#00ff9c;
+  --danger:#ff1744;
+  --warning:#ffd600;
+}
+
+/* Matrix moving background */
+body[data-theme="matrix"]::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+   repeating-linear-gradient(
+    180deg,
+    rgba(0,255,140,.08) 0px,
+    rgba(0,255,140,.02) 2px,
+    transparent 4px,
+    transparent 18px
+   );
+  animation:matrixScroll 12s linear infinite;
+  pointer-events:none;
+  z-index:-1;
+}
+
+@keyframes matrixScroll{
+  from{background-position:0 0;}
+  to{background-position:0 1000px;}
+}
+
+/* Cards */
+body[data-theme="matrix"] .item,
+body[data-theme="matrix"] .card{
+  border:1px solid #0f3;
+  box-shadow:0 0 20px rgba(0,255,160,.35), inset 0 0 15px rgba(0,255,160,.15);
+}
+
+/* Key & date box */
+body[data-theme="matrix"] .license-field,
+body[data-theme="matrix"] input,
+body[data-theme="matrix"] textarea{
+  background:#010a05;
+  border:1px solid #0f3;
+  box-shadow:inset 0 0 10px rgba(0,255,160,.25);
+}
+
+/* Buttons */
+body[data-theme="matrix"] button{
+  background:#010a05;
+  border:1px solid #0f3;
+  color:#00ff9c;
+  box-shadow:0 0 10px rgba(0,255,160,.4);
+}
+
+body[data-theme="matrix"] button:hover{
+  background:#020;
+  box-shadow:0 0 20px rgba(0,255,160,.8);
+}
+
+/* Active badge */
+body[data-theme="matrix"] .position-badge{
+  background:#00ff9c;
+  color:#011;
+  box-shadow:0 0 12px #00ff9c;
+}
   </style>
 </head>
 <body data-theme="gold">
@@ -1044,11 +1127,9 @@ repo3"></textarea>
         <div class="theme-option theme-green" data-theme="green">
           <div>💚 Green</div>
         </div>
-        <div class="theme-option theme-purple" data-theme="purple">
-          <div>💜 Purple</div>
-        </div>
-        <div class="theme-option theme-red" data-theme="red">
-          <div>❤️ Red</div>
+        <div class="theme-option theme-green" data-theme="matrix">
+  <div>🟢 Matrix</div>
+</div>
         </div>
       </div>
       <button class="danger" onclick="closeThemeModal()" style="width: 100%; margin-top: 20px;">Close</button>
