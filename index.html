@@ -831,11 +831,26 @@
       font-size: 0.9em;
     }
     
-    @media (max-width: 768px) {
-      header { flex-direction: column; gap: 15px; }
-      .repo-grid { grid-template-columns: 1fr; }
-      .user-info { flex-wrap: wrap; justify-content: center; }
-    }
+   /* COMPACT INPUT FIX */
+#tab-keys #deviceId,
+#tab-keys #key,
+#tab-keys #username,
+#tab-keys #expiry,
+#tab-keys #positionInput {
+    max-width: 360px !important;
+    width: 100% !important;
+}
+
+/* Mobile me aur chota */
+@media (max-width: 600px) {
+  #tab-keys #deviceId,
+  #tab-keys #key,
+  #tab-keys #username,
+  #tab-keys #expiry,
+  #tab-keys #positionInput {
+      max-width: 280px !important;
+  }
+}
   </style>
 </head>
 <body data-theme="gold">
