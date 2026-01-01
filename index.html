@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=700, initial-scale=0.5, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=700, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes" />
   <title>🔥 GitHub Admin Panel - Enhanced</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -467,7 +467,7 @@
     
     textarea {
       width: calc(100% - 12px);
-      min-height: 400px;
+      min-height: 600px;
       font-family: 'Courier New', monospace;
       font-size: 13px;
       resize: vertical;
@@ -479,6 +479,7 @@
     button.update { background: #43a047; color: #fff; }
     button.danger { background: var(--danger); color: #fff; }
     button.sync { background: var(--warning); color: #fff; }
+    button.disable { background: #666; color: #fff; }
     
     .grid {
       display: grid;
@@ -518,7 +519,7 @@
       content: "⚠️ EXPIRED";
       position: absolute;
       top: 10px;
-      left: 10px;
+      right: 10px;
       background: var(--danger);
       color: white;
       padding: 4px 10px;
@@ -545,6 +546,10 @@
       font-size: 12px;
       font-weight: 600;
       transition: all 0.5s ease;
+    }
+
+    .item.expired .position-badge {
+      top: 40px;
     }
     
     .btn-group {
@@ -826,26 +831,11 @@
       font-size: 0.9em;
     }
     
-    /* COMPACT INPUT FIX */
-#tab-keys #deviceId,
-#tab-keys #key,
-#tab-keys #username,
-#tab-keys #expiry,
-#tab-keys #positionInput {
-    max-width: 360px !important;
-    width: 100% !important;
-}
-
-/* Mobile me aur chota */
-@media (max-width: 600px) {
-  #tab-keys #deviceId,
-  #tab-keys #key,
-  #tab-keys #username,
-  #tab-keys #expiry,
-  #tab-keys #positionInput {
-      max-width: 280px !important;
-  }
-}
+    @media (max-width: 768px) {
+      header { flex-direction: column; gap: 15px; }
+      .repo-grid { grid-template-columns: 1fr; }
+      .user-info { flex-wrap: wrap; justify-content: center; }
+    }
   </style>
 </head>
 <body data-theme="gold">
@@ -1525,6 +1515,7 @@ repo3"></textarea>
           <p><b>Offline:</b> ${item.Allowoffline !== undefined ? item.Allowoffline : 'N/A'}</p>
           <div class="btn-group">
             <button class="update" onclick="updateItem('${deviceId}', ${originalPosition})">✏️ Update</button>
+            <button class="disable" onclick="disableItem('${deviceId}')">🚫 Disable</button>
             <button class="danger" onclick="deleteItem('${deviceId}')">🗑 Delete</button>
           </div>
         `;
@@ -1781,6 +1772,52 @@ repo3"></textarea>
           displayData();
           rawJsonEditor.value = JSON.stringify(currentData, null, 2);
           alert('🗑 Deleted!');
+        }
+      }
+    };
+
+    window.disableItem = async (id) => {
+      if (confirm(`Disable key for ${id}? (Expiry will be set to 01-01-20)`)) {
+        let item = null;
+        let dataArray = [...allDataArray];
+        
+        // Find the item
+        const index = dataArray.findIndex(item => 
+          (item.device_id === id || item.id === id)
+        );
+        
+        if (index !== -1) {
+          // Get current expiry date
+          const currentExpiry = dataArray[index].expirydate || '01-01-2026';
+          const parts = currentExpiry.split('-');
+          
+          // Change year to 20
+          const newExpiry = `${parts[0]}-${parts[1]}-20`;
+          dataArray[index].expirydate = newExpiry;
+          
+          // Convert back to original format
+          if (Array.isArray(currentData)) {
+            currentData = dataArray;
+          } else {
+            const newObj = {};
+            dataArray.forEach(item => {
+              const deviceId = item.device_id || item.id;
+              newObj[deviceId] = {
+                device_id: deviceId,
+                key: item.key,
+                expirydate: item.expirydate,
+                user: item.user,
+                Allowoffline: item.Allowoffline
+              };
+            });
+            currentData = newObj;
+          }
+          
+          if (await saveDataToGitHub(`Disable key for ${id}`)) {
+            displayData();
+            rawJsonEditor.value = JSON.stringify(currentData, null, 2);
+            alert('🚫 Disabled! Expiry set to ' + newExpiry);
+          }
         }
       }
     };
