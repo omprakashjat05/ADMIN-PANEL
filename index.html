@@ -951,7 +951,7 @@ repo3"></textarea>
               <input type="text" id="deviceId" placeholder="Device ID" style="width: calc(100% - 12px);">
               <input type="text" id="key" placeholder="Key" style="width: calc(100% - 12px);">
               <div class="date-input-wrapper">
-                <input type="text" id="expiry" placeholder="Expiry (dd-mm-yyyy)" value="01-01-2026">
+                <input type="text" id="expiry" placeholder="Expiry (dd-mm-yyyy)">
                 <div class="quick-date-buttons">
                   <button class="quick-date-btn" onclick="setQuickDate(7)">7d</button>
                   <button class="quick-date-btn" onclick="setQuickDate(15)">15d</button>
@@ -1909,7 +1909,20 @@ repo3"></textarea>
 
     function updateLastSync() {
       document.getElementById('lastSync').textContent = `Last: ${new Date().toLocaleTimeString('en-IN')}`;
-    }
+    }// Set default expiry to TOMORROW
+(function setTomorrowDefault() {
+  const inp = document.getElementById("expiry");
+  if(!inp) return;
+
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yy = d.getFullYear();
+
+  inp.value = `${dd}-${mm}-${yy}`;
+})();
   </script>
 </body>
 </html>
