@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=1000, initial-scale=0.6, maximum-scale=1.0, user-scalable=yes" />
   <title>🔥 GitHub Admin Panel - Enhanced</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -460,7 +460,10 @@
       outline: none;
     }
     
-    input { width: calc(100% - 12px); }
+    input { 
+      width: calc(100% - 12px);
+      max-width: 100%;
+    }
     
     textarea {
       width: calc(100% - 12px);
@@ -652,6 +655,21 @@
       margin: 0;
     }
 
+    /* Form Input Styling */
+    #deviceId, #key, #username {
+      width: calc(100% - 12px) !important;
+      max-width: 100%;
+    }
+
+    .position-input-group {
+      width: 100%;
+    }
+
+    .position-input-group > div {
+      flex: 1;
+      max-width: 100%;
+    }
+
     .position-suggestions {
       position: absolute;
       background: var(--bg-input);
@@ -808,11 +826,26 @@
       font-size: 0.9em;
     }
     
-    @media (max-width: 768px) {
-      header { flex-direction: column; gap: 15px; }
-      .repo-grid { grid-template-columns: 1fr; }
-      .user-info { flex-wrap: wrap; justify-content: center; }
-    }
+    /* COMPACT INPUT FIX */
+#tab-keys #deviceId,
+#tab-keys #key,
+#tab-keys #username,
+#tab-keys #expiry,
+#tab-keys #positionInput {
+    max-width: 360px !important;
+    width: 100% !important;
+}
+
+/* Mobile me aur chota */
+@media (max-width: 600px) {
+  #tab-keys #deviceId,
+  #tab-keys #key,
+  #tab-keys #username,
+  #tab-keys #expiry,
+  #tab-keys #positionInput {
+      max-width: 280px !important;
+  }
+}
   </style>
 </head>
 <body data-theme="gold">
@@ -924,9 +957,9 @@ repo3"></textarea>
         <div class="tab-content active" id="tab-keys">
           <div class="card" style="background: var(--bg-hover);">
             <h3>➕ Add / Update License Key</h3>
-            <div>
-              <input type="text" id="deviceId" placeholder="Device ID">
-              <input type="text" id="key" placeholder="Key">
+            <div style="display: flex; flex-direction: column; gap: 0;">
+              <input type="text" id="deviceId" placeholder="Device ID" style="width: calc(100% - 12px);">
+              <input type="text" id="key" placeholder="Key" style="width: calc(100% - 12px);">
               <div class="date-input-wrapper">
                 <input type="text" id="expiry" placeholder="Expiry (dd-mm-yyyy)" value="01-01-2026">
                 <div class="quick-date-buttons">
@@ -935,9 +968,9 @@ repo3"></textarea>
                   <button class="quick-date-btn" onclick="setQuickDate(30)">30d</button>
                 </div>
               </div>
-              <input type="text" id="username" placeholder="User name">
+              <input type="text" id="username" placeholder="User name" style="width: calc(100% - 12px);">
               <label style="color: var(--accent); margin: 8px 6px;">
-                <input type="checkbox" id="allowOffline"> Allow Offline
+                <input type="checkbox" id="allowOffline" style="width: auto;"> Allow Offline
               </label>
             </div>
             <div class="position-input-group">
