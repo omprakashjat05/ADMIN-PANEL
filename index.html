@@ -963,7 +963,10 @@ repo3"></textarea>
           <div class="card" style="background: var(--bg-hover);">
             <h3>➕ Add / Update License Key</h3>
             <div style="display: flex; flex-direction: column; gap: 0;">
-              <input type="text" id="deviceId" placeholder="Device ID" style="width: calc(100% - 12px);">
+              <div style="display:flex; gap:8px; align-items:center;">
+  <input type="text" id="deviceId" placeholder="Device ID" style="flex:1;">
+  <button type="button" class="sync" onclick="pasteDeviceId()">📋 Paste</button>
+</div>
               <input type="text" id="key" placeholder="Key" style="width: calc(100% - 12px);">
               <div class="date-input-wrapper">
                 <input type="text" id="expiry" placeholder="Expiry (dd-mm-yyyy)">
@@ -1543,10 +1546,14 @@ if (!selectedFile && jsonFiles.length > 0) {
           <span class="position-badge">#${originalPosition}</span>
           <p><b>Device:</b> ${deviceId}</p>
           <p><b>User:</b> ${item.user || 'N/A'}</p>
-          <p><b>Key:</b> ${item.key || 'N/A'}</p>
+          <p style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+  <span><b>Key:</b> ${item.key || 'N/A'}</span>
+  <button class="sync" onclick="copyKey('${item.key || ''}')">📋 Copy</button>
+</p>
           <p><b>Expiry:</b> ${item.expirydate || 'N/A'}</p>
           <p><b>Offline:</b> ${item.Allowoffline !== undefined ? item.Allowoffline : 'N/A'}</p>
           <div class="btn-group">
+        
             <button class="update" onclick="updateItem('${deviceId}', ${originalPosition})">✏️ Update</button>
             <button class="disable" onclick="disableItem('${deviceId}')">🚫 Disable</button>
             <button class="danger" onclick="deleteItem('${deviceId}')">🗑 Delete</button>
@@ -1935,11 +1942,26 @@ if (!selectedFile && jsonFiles.length > 0) {
     function updateRepoStatus(msg) {
       document.getElementById('repoStatus').innerHTML = `<span>📁</span><span>${msg}</span>`;
     }
-
+     function copyKey(key){
+  navigator.clipboard.writeText(key);
+  alert("✅ Key copied!");
+}
     function updateCurrentRepo() {
       document.getElementById('currentRepo').textContent = `${selectedRepo.name} → ${selectedFile}`;
     }
+     function pasteDeviceId(){
+  const input = document.getElementById("deviceId");
+  input.focus();
 
+  // Android & old browser fallback
+  setTimeout(()=>{
+    try {
+      document.execCommand("paste");
+    } catch(e){
+      alert("Clipboard permission denied.\nLong press and paste manually.");
+    }
+  },100);
+}
     function updateLastSync() {
       document.getElementById('lastSync').textContent = `Last: ${new Date().toLocaleTimeString('en-IN')}`;
     }// Set default expiry to TOMORROW
