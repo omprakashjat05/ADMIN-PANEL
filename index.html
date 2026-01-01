@@ -963,10 +963,7 @@ repo3"></textarea>
           <div class="card" style="background: var(--bg-hover);">
             <h3>➕ Add / Update License Key</h3>
             <div style="display: flex; flex-direction: column; gap: 0;">
-              <div style="display:flex; gap:8px; align-items:center;">
-  <input type="text" id="deviceId" placeholder="Device ID" style="flex:1;">
-  <button type="button" class="sync" onclick="pasteDeviceId()">📋 Paste</button>
-</div>
+              <input type="text" id="deviceId" placeholder="Device ID" style="width: calc(100% - 12px);">
               <input type="text" id="key" placeholder="Key" style="width: calc(100% - 12px);">
               <div class="date-input-wrapper">
                 <input type="text" id="expiry" placeholder="Expiry (dd-mm-yyyy)">
@@ -1949,19 +1946,7 @@ if (!selectedFile && jsonFiles.length > 0) {
     function updateCurrentRepo() {
       document.getElementById('currentRepo').textContent = `${selectedRepo.name} → ${selectedFile}`;
     }
-     function pasteDeviceId(){
-  const input = document.getElementById("deviceId");
-  input.focus();
 
-  // Android & old browser fallback
-  setTimeout(()=>{
-    try {
-      document.execCommand("paste");
-    } catch(e){
-      alert("Clipboard permission denied.\nLong press and paste manually.");
-    }
-  },100);
-}
     function updateLastSync() {
       document.getElementById('lastSync').textContent = `Last: ${new Date().toLocaleTimeString('en-IN')}`;
     }// Set default expiry to TOMORROW
