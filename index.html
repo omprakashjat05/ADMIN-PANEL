@@ -1107,7 +1107,7 @@ repo3"></textarea>
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Reset time to start of day
         
-        return expiry < today;
+        return expiry <= today;
       } catch (e) {
         return false;
       }
