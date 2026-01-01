@@ -850,7 +850,9 @@
   #tab-keys #positionInput {
       max-width: 280px !important;
   }
-}
+}.tap-copy{cursor:pointer;}
+.tap-copy span{transition:.3s;}
+.tap-copy:hover span{color:var(--accent);}
   </style>
 </head>
 <body data-theme="gold">
@@ -1543,9 +1545,8 @@ if (!selectedFile && jsonFiles.length > 0) {
           <span class="position-badge">#${originalPosition}</span>
           <p><b>Device:</b> ${deviceId}</p>
           <p><b>User:</b> ${item.user || 'N/A'}</p>
-          <p style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-  <span><b>Key:</b> ${item.key || 'N/A'}</span>
-  <button class="sync" onclick="copyKey('${item.key || ''}')">📋 Copy</button>
+          <p class="tap-copy" onclick="copyKey('${item.key || ''}')">
+  <b>Key:</b> <span>${item.key || 'N/A'}</span>
 </p>
           <p><b>Expiry:</b> ${item.expirydate || 'N/A'}</p>
           <p><b>Offline:</b> ${item.Allowoffline !== undefined ? item.Allowoffline : 'N/A'}</p>
