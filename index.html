@@ -2260,6 +2260,32 @@ window.addEventListener("scroll",()=>{
    b.style.display="none";
  }
 });
+let repoCloseTimer = null;
+
+function scheduleRepoDrawerClose(){
+  if(repoCloseTimer) clearTimeout(repoCloseTimer);
+
+  repoCloseTimer = setTimeout(()=>{
+    const sec = document.getElementById("repoSection");
+    const icon = document.getElementById("repoSectionIcon");
+
+    if(sec && !sec.classList.contains("collapsed")){
+      sec.classList.add("collapsed");          // 👈 REAL CLOSE
+      icon.classList.add("collapsed");
+      icon.textContent = "▶";
+    }
+  },3000);
+}
+
+/* manual file change */
+fileSelect.addEventListener("change", scheduleRepoDrawerClose);
+
+/* auto file load after repo select */
+const __oldLoad = loadFileData;
+loadFileData = async function(){
+  await __oldLoad();
+  scheduleRepoDrawerClose();
+};
 </script>
 <div class="modal-bg" id="keyModal">
 <div class="modal-box">
