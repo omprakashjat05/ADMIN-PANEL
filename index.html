@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=700, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes" />
-  <title>🔥 GitHub Admin Panel - Enhanced</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=700, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes" name="viewport"/>
+<title>🔥 GitHub Admin Panel - Enhanced</title>
+<style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     
     :root {
@@ -936,52 +937,130 @@ body[data-theme="matrix"] .position-badge{
   color:#011;
   box-shadow:0 0 12px #00ff9c;
 }
-  </style>
+
+  
+#floatingAddBtn{
+ position:fixed;
+ left:50%;
+ transform:translateX(-50%);
+ bottom:30px;
+
+ width:100px;
+ height:100px;
+ border-radius:50%;
+ font-size:60px;
+
+ background:var(--accent);
+ color:#111;
+ border:none;
+ cursor:pointer;
+ box-shadow:0 0 30px var(--accent-light);
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:0;               /* 👈 IMPORTANT */
+ box-sizing:border-box;  /* 👈 IMPORTANT */
+}
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  z-index:99999;
+
+  padding-top:8vh;
+
+  /* 👇 FULL SIZE CONTROL */
+  padding-left:2vw;
+  padding-right:2vw;
+  overflow-y:auto;
+}
+
+/* popup size responsive */
+.modal-bg .modal-box{
+  width:100%;
+  max-width:600px;
+  max-height:120vh;
+  overflow-y:auto;
+}
+
+/* tablet */
+@media(min-width:600px){
+ .modal-bg{ padding-top:12vh; }
+ .modal-bg .modal-box{ max-width:600px; }
+}
+
+/* desktop */
+@media(min-width:1000px){
+ .modal-bg{ padding-top:16vh; }
+ .modal-bg .modal-box{ max-width:750px; }
+}
+#topBtn:hover{
+ transform:scale(1.15);
+ box-shadow:0 0 40px var(--accent-light);
+}
+#topBtn{
+ position:fixed;
+ right:30px;
+ bottom:60px;
+ width:80px;
+ height:80px;
+ border-radius:50%;
+ background:var(--bg-card);
+ border:2px solid var(--accent);
+ color:var(--accent);
+ font-size:55px;
+ display:none;
+ z-index:9999;
+ box-shadow:0 0 25px var(--accent-light);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+</style>
 </head>
 <body data-theme="gold">
-  <header>
-    <h1>
-      <svg class="github-logo" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-      </svg>
+<header>
+<h1>
+<svg class="github-logo" viewbox="0 0 16 16">
+<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" fill-rule="evenodd"></path>
+</svg>
       GitHub Admin Panel
     </h1>
-    <div class="user-info" id="userInfo" style="display:none;">
-      <div class="user-details">
-        <div class="user-name" id="userName"></div>
-        <div class="user-username" id="userUsername"></div>
-      </div>
-      <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
-      <button class="theme-btn" id="themeBtn">🎨 Theme</button>
-      <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
-    </div>
-  </header>
-
-  <main>
-    <!-- Login Section -->
-    <div id="loginSection">
-      <div class="card login-card">
-        <h3>🔐 GitHub Access Token Login</h3>
-        
-        <div class="info-box">
-          <p><strong>⚠️ Token Generate Steps:</strong></p>
-        </div>
-        
-        <ol>
-          <li>GitHub: <a href="https://github.com/settings/tokens" target="_blank">https://github.com/settings/tokens</a></li>
-          <li><strong>"Generate new token (classic)"</strong></li>
-          <li>Permissions: <strong>✅ repo</strong></li>
-          <li>Generate & copy token</li>
-        </ol>
-        
-        <div class="token-input-group">
-          <label>🔑 GitHub Personal Access Token:</label>
-          <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
-        </div>
-        
-        <div class="token-input-group">
-          <label>📁 Repository Filter (optional):</label>
-          <textarea id="repoFilterInput" placeholder="Repository names (comma or new line separated):
+<div class="user-info" id="userInfo" style="display:none;">
+<div class="user-details">
+<div class="user-name" id="userName"></div>
+<div class="user-username" id="userUsername"></div>
+</div>
+<img alt="Avatar" class="user-avatar" id="userAvatar" src=""/>
+<button class="theme-btn" id="themeBtn">🎨 Theme</button>
+<button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+</div>
+</header>
+<main>
+<!-- Login Section -->
+<div id="loginSection">
+<div class="card login-card">
+<h3>🔐 GitHub Access Token Login</h3>
+<div class="info-box">
+<p><strong>⚠️ Token Generate Steps:</strong></p>
+</div>
+<ol>
+<li>GitHub: <a href="https://github.com/settings/tokens" target="_blank">https://github.com/settings/tokens</a></li>
+<li><strong>"Generate new token (classic)"</strong></li>
+<li>Permissions: <strong>✅ repo</strong></li>
+<li>Generate &amp; copy token</li>
+</ol>
+<div class="token-input-group">
+<label>🔑 GitHub Personal Access Token:</label>
+<input id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" type="password"/>
+</div>
+<div class="token-input-group">
+<label>📁 Repository Filter (optional):</label>
+<textarea id="repoFilterInput" placeholder="Repository names (comma or new line separated):
 
 repo1, repo2, repo3
 
@@ -990,155 +1069,146 @@ or
 repo1
 repo2
 repo3"></textarea>
-        </div>
-        
-        <button class="login-btn" id="loginBtn">🚀 Connect to GitHub</button>
-      </div>
-    </div>
-
-    <!-- Main Panel -->
-    <div id="mainPanel" style="display:none;">
-      <div class="card">
-        <h3 onclick="toggleCollapse('repoSection')">
-          📁 Select Repository & File
-          <span class="collapse-icon" id="repoSectionIcon">▼</span>
-        </h3>
-        
-        <div class="collapsible-content" id="repoSection">
-          <div class="repo-filter-info" id="filterInfo" style="display:none;">
-            <div>
-              <strong>🔍 Filter:</strong> <span id="filterCount">0</span> repos
-            </div>
-          </div>
-          
-          <div class="status-bar">
-            <div class="status" id="repoStatus">⚡ Ready</div>
-            <div class="actions">
-              <button class="sync" id="filterBtn" style="margin: 0;">🔍 Filter</button>
-              <button class="sync" id="refreshReposBtn" style="margin: 0;">🔄 Refresh</button>
-            </div>
-          </div>
-          
-          <div class="repo-grid" id="repoGrid"></div>
-          
-          <div class="file-selector" id="fileSelector" style="display:none;">
-            <label style="color: var(--accent); font-weight: 600; display: block; margin: 10px 6px;">Select JSON File:</label>
-            <select id="fileSelect">
-              <option value="">-- Select a JSON file --</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="mainContent" style="display:none;">
-        <div class="status-bar">
-          <div class="status" id="syncStatus">⚡ Ready</div>
-          <div style="color: var(--text-secondary); font-size: 0.9em;">
-            <span id="currentRepo">No repo selected</span> • 
-            <span id="lastSync">Not synced</span>
-          </div>
-        </div>
-
-        <div class="tabs">
-          <button class="tab active" data-tab="keys">📜 Active Keys</button>
-          <button class="tab" data-tab="editor">📝 Raw JSON Editor</button>
-        </div>
-
-        <div class="tab-content active" id="tab-keys">
-          <div class="card" style="background: var(--bg-hover);">
-            <h3>➕ Add / Update License Key</h3>
-            <div style="display: flex; flex-direction: column; gap: 0;">
-              <input type="text" id="deviceId" placeholder="Device ID" style="width: calc(100% - 12px);">
-              <input type="text" id="key" placeholder="Key" style="width: calc(100% - 12px);">
-              <div class="date-input-wrapper">
-                <input type="text" id="expiry" placeholder="Expiry (dd-mm-yyyy)">
-                <div class="quick-date-buttons">
-                  <button class="quick-date-btn" onclick="setQuickDate(7)">7d</button>
-                  <button class="quick-date-btn" onclick="setQuickDate(15)">15d</button>
-                  <button class="quick-date-btn" onclick="setQuickDate(30)">30d</button>
-                </div>
-              </div>
-              <input type="text" id="username" placeholder="User name" style="width: calc(100% - 12px);">
-              <label style="color: var(--accent); margin: 8px 6px;">
-                <input type="checkbox" id="allowOffline" style="width: auto;"> Allow Offline
-              </label>
-            </div>
-            <div class="position-input-group">
-              <label>📍 Position:</label>
-              <div style="position: relative; flex: 1;">
-                <input type="text" id="positionInput" placeholder="Type position number or search user..." autocomplete="off" />
-                <div class="position-suggestions" id="positionSuggestions"></div>
-              </div>
-              <span id="positionInfo" style="color: var(--text-secondary); font-size: 0.9em;"></span>
-            </div>
-            <button id="saveBtn" class="save">💾 Save to GitHub</button>
-            <button id="cancelBtn" class="danger" style="display:none;">❌ Cancel</button>
-          </div>
-
-          <div class="card" style="background: var(--bg-hover);">
-            <h3>📋 License Keys</h3>
-            
-            <div style="margin: 15px 6px; color: var(--text-secondary); font-size: 0.95em; font-weight: 600;">
-              <span id="keysCountInfo">Total: 0 | Active: 0 | Expired: 0</span>
-            </div>
-            
-            <div class="tabs" style="margin-top: 10px;">
-              <button class="tab active filter-tab" data-filter="all">📜 All Keys</button>
-              <button class="tab filter-tab" data-filter="active">✅ Active</button>
-              <button class="tab filter-tab" data-filter="expired">⚠️ Expired</button>
-            </div>
-            
-            <div class="search-box">
-              <span class="search-icon">🔍</span>
-              <input type="text" id="searchInput" placeholder="Search by Device ID, User, or Key...">
-            </div>
-            
-            <div id="dataList" class="grid"></div>
-          </div>
-        </div>
-
-        <div class="tab-content" id="tab-editor">
-          <div class="card" style="background: var(--bg-hover);">
-            <h3>📝 Edit Raw JSON</h3>
-            <textarea id="rawJsonEditor" placeholder="JSON data will appear here..."></textarea>
-            <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-              <button class="update" id="updateFromJsonBtn">📤 Save JSON</button>
-              <button class="sync" id="formatJsonBtn">✨ Format</button>
-              <button class="sync" id="copyJsonBtn">📋 Copy</button>
-              <button class="danger" id="resetJsonBtn">🔄 Reset</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Theme Modal -->
-  <div id="themeModal" class="theme-modal">
-    <div class="theme-modal-content">
-      <h3 style="color: var(--accent); margin-bottom: 20px;">🎨 Choose Theme</h3>
-      <div class="theme-grid">
-        <div class="theme-option theme-gold" data-theme="gold">
-          <div>🌟 Gold</div>
-        </div>
-        <div class="theme-option theme-blue" data-theme="blue">
-          <div>💙 Blue</div>
-        </div>
-        <div class="theme-option theme-green" data-theme="green">
-          <div>💚 Green</div>
-        </div>
-        <div class="theme-option theme-green" data-theme="matrix">
-  <div>🟢 Matrix</div>
 </div>
-        </div>
-      </div>
-      <button class="danger" onclick="closeThemeModal()" style="width: 100%; margin-top: 20px;">Close</button>
-    </div>
-  </div>
-
-  <footer>© 2025 GitHub Admin Panel | By OP Mods</footer>
-
-  <script>
+<button class="login-btn" id="loginBtn">🚀 Connect to GitHub</button>
+</div>
+</div>
+<!-- Main Panel -->
+<div id="mainPanel" style="display:none;">
+<div class="card">
+<h3 onclick="toggleCollapse('repoSection')">
+          📁 Select Repository &amp; File
+          <span class="collapse-icon" id="repoSectionIcon">▼</span>
+</h3>
+<div class="collapsible-content" id="repoSection">
+<div class="repo-filter-info" id="filterInfo" style="display:none;">
+<div>
+<strong>🔍 Filter:</strong> <span id="filterCount">0</span> repos
+            </div>
+</div>
+<div class="status-bar">
+<div class="status" id="repoStatus">⚡ Ready</div>
+<div class="actions">
+<button class="sync" id="filterBtn" style="margin: 0;">🔍 Filter</button>
+<button class="sync" id="refreshReposBtn" style="margin: 0;">🔄 Refresh</button>
+</div>
+</div>
+<div class="repo-grid" id="repoGrid"></div>
+<div class="file-selector" id="fileSelector" style="display:none;">
+<label style="color: var(--accent); font-weight: 600; display: block; margin: 10px 6px;">Select JSON File:</label>
+<select id="fileSelect">
+<option value="">-- Select a JSON file --</option>
+</select>
+</div>
+</div>
+</div>
+<div class="card" id="mainContent" style="display:none;">
+<div class="status-bar">
+<div class="status" id="syncStatus">⚡ Ready</div>
+<div style="color: var(--text-secondary); font-size: 0.9em;">
+<span id="currentRepo">No repo selected</span> • 
+            <span id="lastSync">Not synced</span>
+</div>
+</div>
+<div class="tabs">
+<button class="tab active" data-tab="keys">📜 Active Keys</button>
+<button class="tab" data-tab="editor">📝 Raw JSON Editor</button>
+</div>
+<div class="tab-content active" id="tab-keys">
+<div class="card" style="background: var(--bg-hover);">
+<h3>➕ Add / Update License Key</h3>
+<div style="display: flex; flex-direction: column; gap: 0;">
+<input id="deviceId" placeholder="Device ID" style="width: calc(100% - 12px);" type="text"/>
+<input id="key" placeholder="Key" style="width: calc(100% - 12px);" type="text"/>
+<div class="date-input-wrapper">
+<input id="expiry" placeholder="Expiry (dd-mm-yyyy)" type="text"/>
+<div class="quick-date-buttons">
+<button class="quick-date-btn" onclick="setQuickDate(7)">7d</button>
+<button class="quick-date-btn" onclick="setQuickDate(15)">15d</button>
+<button class="quick-date-btn" onclick="setQuickDate(30)">30d</button>
+</div>
+</div>
+<input id="username" placeholder="User name" style="width: calc(100% - 12px);" type="text"/>
+<label style="color: var(--accent); margin: 8px 6px;">
+<input id="allowOffline" style="width: auto;" type="checkbox"/> Allow Offline
+              </label>
+</div>
+<div class="position-input-group">
+<label>📍 Position:</label>
+<div style="position: relative; flex: 1;">
+<input autocomplete="off" id="positionInput" placeholder="Type position number or search user..." type="text"/>
+<div class="position-suggestions" id="positionSuggestions"></div>
+</div>
+<span id="positionInfo" style="color: var(--text-secondary); font-size: 0.9em;"></span>
+</div>
+<button class="save" id="saveBtn">💾 Save to GitHub</button>
+<button class="danger" id="cancelBtn" style="display:none;">❌ Cancel</button>
+</div>
+<div class="card" style="background: var(--bg-hover);">
+<h3>📋 License Keys</h3>
+<div style="margin: 15px 6px; color: var(--text-secondary); font-size: 0.95em; font-weight: 600;">
+<span id="keysCountInfo">Total: 0 | Active: 0 | Expired: 0</span>
+</div>
+<div class="tabs" style="margin-top: 10px;">
+<button class="tab active filter-tab" data-filter="all">📜 All Keys</button>
+<button class="tab filter-tab" data-filter="active">✅ Active</button>
+<button class="tab filter-tab" data-filter="expired">⚠️ Expired</button>
+</div>
+<div class="search-box">
+<span class="search-icon">🔍</span>
+<input id="searchInput" placeholder="Search by Device ID, User, or Key..." type="text"/>
+</div>
+<div class="grid" id="dataList"></div>
+</div>
+</div>
+<div class="tab-content" id="tab-editor">
+<div class="card" style="background: var(--bg-hover);">
+<h3>📝 Edit Raw JSON</h3>
+<textarea id="rawJsonEditor" placeholder="JSON data will appear here..."></textarea>
+<div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+<button class="update" id="updateFromJsonBtn" onclick="openKeyModal();">📤 Save JSON</button>
+<button class="sync" id="formatJsonBtn">✨ Format</button>
+<button class="sync" id="copyJsonBtn">📋 Copy</button>
+<button class="danger" id="resetJsonBtn">🔄 Reset</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Theme Modal -->
+<div class="theme-modal" id="themeModal">
+<div class="theme-modal-content">
+<h3 style="color: var(--accent); margin-bottom: 20px;">🎨 Choose Theme</h3>
+<div class="theme-grid">
+<div class="theme-option theme-gold" data-theme="gold">
+<div>🌟 Gold</div>
+</div>
+<div class="theme-option theme-blue" data-theme="blue">
+<div>💙 Blue</div>
+</div>
+<div class="theme-option theme-green" data-theme="green">
+<div>💚 Green</div>
+</div>
+<div class="theme-option theme-green" data-theme="matrix">
+<div>🟢 Matrix</div>
+</div>
+</div>
+</div>
+<div style="display:flex; justify-content:center;">
+<button class="danger" onclick="closeThemeModal()" style="width: 60%; margin-top: 20px;">Close</button>
+</div>
+</div>
+<footer>© 2025 GitHub Admin Panel | By OP Mods</footer>
+<button id="floatingAddBtn" onclick="openKeyModal()" style="
+display:none;
+position:fixed;
+left:50%;
+transform:translateX(-50%);
+bottom:30px;
+z-index:9999;">➕</button>
+<button id="topBtn" onclick="topScroll()">⇧</button>
+<script>
     let accessToken = null;
     let userData = null;
     let repositories = [];
@@ -1398,8 +1468,14 @@ repo3"></textarea>
       }
       
       displayRepositories();
-      updateRepoStatus(`✅ Loaded ${repositories.length} repos`);
-    }
+updateRepoStatus(`✅ Loaded ${repositories.length} repos`);
+
+// 🔥 ADD THIS
+const addBtn = document.getElementById("floatingAddBtn");
+const topBtn = document.getElementById("topBtn");
+if(addBtn) addBtn.style.display="flex";
+if(topBtn) topBtn.style.display="none";
+}
 
     function displayRepositories() {
       repoGrid.innerHTML = '';
@@ -1597,11 +1673,28 @@ if (!selectedFile && jsonFiles.length > 0) {
         filteredDataArray = statusFilteredArray;
       }
       
-      if (filteredDataArray.length === 0) {
-        dataList.innerHTML = '<div class="empty-state"><p>No keys found</p></div>';
-        updatePositionInfo(0);
-        return;
-      }
+     if (filteredDataArray.length === 0) {
+  dataList.innerHTML = `
+    <div class="empty-state">
+      <p>No keys found</p>
+      <button onclick="openKeyModal()" 
+        style="
+          margin-top:15px;
+          padding:12px 24px;
+          background:var(--accent);
+          border:none;
+          border-radius:30px;
+          font-weight:600;
+          color:#111;
+          box-shadow:0 0 20px var(--accent-light);
+          cursor:pointer;
+        ">
+        ➕ Add New Key
+      </button>
+    </div>`;
+  updatePositionInfo(0);
+  return;
+}
 
       updatePositionInfo(filteredDataArray.length);
 
@@ -2045,6 +2138,134 @@ if (!selectedFile && jsonFiles.length > 0) {
 
   inp.value = `${dd}-${mm}-${yy}`;
 })();
-  </script>
+
+  
+function openKeyModal(){document.getElementById("keyModal").style.display="flex";}
+function closeKeyModal(){document.getElementById("keyModal").style.display="none";}
+window.addEventListener("load",()=>{
+ const cards=document.querySelectorAll("h3");
+ cards.forEach(h=>{
+   if(h.textContent.includes("Add / Update License")){
+     const card=h.closest(".card");
+     if(card){
+       document.getElementById("modalFormHolder").appendChild(card);
+       card.style.display="block";
+     }
+   }
+ });
+});
+
+const oldUpdateItem = window.updateItem;
+window.updateItem = function(id,pos){
+  openKeyModal();
+  return oldUpdateItem(id,pos);
+};
+
+const oldAlert = window.alert;
+window.alert = function(msg){
+  if(msg.includes("Added")||msg.includes("Updated")||msg.includes("success")){
+    closeKeyModal();
+  }
+  oldAlert(msg);
+};
+
+function searchKeys(){
+ const q=document.getElementById("searchBox").value.toLowerCase();
+ const cards=document.querySelectorAll(".item");
+ let found=false;
+ cards.forEach(c=>{
+  if(c.innerText.toLowerCase().includes(q)){
+    c.style.display="block";found=true;
+  }else c.style.display="none";
+ });
+ if(!found){
+   document.getElementById("searchResult").innerHTML='<p style="color:red">No keys found <button onclick="openKeyModal()" class="sync">Add New Key</button></p>';
+ }else document.getElementById("searchResult").innerHTML="";
+}
+window.addEventListener("scroll",()=>{
+  const topBtn = document.getElementById("topBtn");
+  const panel = document.getElementById("mainPanel");
+
+  // Agar login page hai → kabhi show mat karo
+  if(panel.style.display !== "block"){
+    topBtn.style.display = "none";
+    return;
+  }
+
+  // Sirf login ke baad scroll par show
+  if(window.scrollY > 250){
+    topBtn.style.display = "flex";
+  }else{
+    topBtn.style.display = "none";
+  }
+});
+
+function topScroll(){
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+window.addEventListener("load",()=>{
+ if(typeof initializeApp==="function"){
+   const _oldInit=initializeApp;
+   initializeApp=async function(){
+     const r=await _oldInit();
+     const a=document.getElementById("floatingAddBtn");
+     const b=document.getElementById("topBtn");
+     if(a) a.style.display="flex";
+     if(b) b.style.display="none";
+     return r;
+   }
+ }
+});
+window.addEventListener("scroll",()=>{
+ const b=document.getElementById("topBtn");
+ if(typeof mainPanel!=="undefined" && mainPanel.style.display==="block" && window.scrollY>250){
+   if(b) b.style.display="flex";
+ }else{
+   if(b) b.style.display="none";
+ }
+});
+window.addEventListener("scroll",()=>{
+  const b=document.getElementById("topBtn");
+  if(mainPanel.style.display==="block" && window.scrollY>250){
+    b.style.display="flex";
+  }else{
+    b.style.display="none";
+  }
+});
+setInterval(()=>{
+  if(mainPanel.style.display==="block"){
+    const add=document.getElementById("floatingAddBtn");
+    if(add) add.style.display="flex";
+  }
+},1000);
+// HARD LOCK TOP BUTTON – LOGIN SAFE
+setInterval(()=>{
+  const top = document.getElementById("topBtn");
+  if(!top) return;
+
+  // Agar login panel visible hai → force hide
+  if(mainPanel.style.display !== "block"){
+    top.style.display = "none";
+  }
+},500);
+window.addEventListener("scroll",()=>{
+ const b=document.getElementById("topBtn");
+ if(mainPanel.style.display==="block" && window.scrollY>250){
+   b.style.display="flex";
+ }else{
+   b.style.display="none";
+ }
+});
+</script>
+<div class="modal-bg" id="keyModal">
+<div class="modal-box">
+<h2 style="color:var(--accent);margin-bottom:20px;"></h2>
+<div id="modalFormHolder"></div>
+<div style="display:flex;justify-content:center;">
+<button class="danger" onclick="closeKeyModal()" style="width:100%">Close</button>
+</div>
+</div>
+</div>
 </body>
-  </html>
+</html>
