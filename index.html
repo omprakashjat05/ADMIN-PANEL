@@ -386,19 +386,22 @@
       color: #888;
     }
     
-    .file-selector select {
-      width: 100%;
-      padding: 12px;
-      background: var(--bg-input);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 1em;
-      cursor: pointer;
-      outline: none;
-      margin-top: 15px;
-      transition: all 0.5s ease;
-    }
+.file-selector select {
+  width: 99%;
+  max-width: 99%;
+  padding: 12px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  outline: none;
+  margin-top: 15px;
+  transition: all 0.5s ease;
+
+  box-sizing: border-box;   /* 👈 FIX */
+}
     
     .tabs {
       display: flex;
