@@ -956,19 +956,20 @@
       gap: 4px;
     }
 
-    .quick-date-btn {
-      background: var(--accent);
-      color: #111;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-      margin: 0;
-    }
+ 
+.quick-date-btn{
+  background: var(--accent);
+  color:#111;
+  border:none;
+  border-radius:10px;
+  padding:12px 22px;     /* 👈 बड़ा size */
+  font-size:16px;       /* 👈 बड़ा text */
+  font-weight:700;
+  min-width:72px;       /* 👈 बराबर चौड़ाई */
+  cursor:pointer;
+  transition:.25s;
+  box-shadow:0 0 18px var(--accent-light);
+}
 
     .quick-date-btn:hover {
       background: var(--accent-hover);
