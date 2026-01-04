@@ -1123,17 +1123,24 @@
     }
 
     .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      padding: 20px;
-      overflow-y: auto;
-      animation: overlayFadeIn 0.3s ease;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: none;
+
+  /* 👇 CENTER से हटाकर ऊपर ले जाने के लिए */
+  align-items: flex-start;
+  justify-content: center;
+
+  padding-top: 8vh;   /* जितना ऊपर चाहिए उतना बढ़ा/घटा सकते हो */
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+
+  z-index: 10000;
+  overflow-y: auto;
+   animation: overlayFadeIn 0.3s ease;
     }
 
     @keyframes overlayFadeIn {
