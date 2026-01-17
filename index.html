@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=700, initial-scale=0.45, maximum-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=no" />
   <title>🔥 GitHub Admin Panel - Enhanced</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -2388,11 +2388,25 @@ repo3"></textarea>
           </p>
           <p><b>Expiry:</b> ${item.expirydate || 'N/A'}</p>
           <p><b>Offline:</b> ${item.Allowoffline !== undefined ? item.Allowoffline : 'N/A'}</p>
-          <div class="btn-group">
-            <button class="update" onclick="updateItem('${deviceId}', ${originalPosition})">✏️ Update</button>
-            <button class="disable" onclick="disableItem('${deviceId}')">🚫 Disable</button>
-            <button class="danger" onclick="deleteItem('${deviceId}')">🗑 Delete</button>
-          </div>
+          <div class="btn-group" style="gap:1px;">
+  <button class="update"
+    style="font-size:12px;"
+    onclick="updateItem('${deviceId}', ${originalPosition})">
+    ✏️ Update
+  </button>
+
+  <button class="disable"
+    style="font-size:12px;"
+    onclick="disableItem('${deviceId}')">
+    🚫 Disable
+  </button>
+
+  <button class="danger"
+    style="font-size:12px;"
+    onclick="deleteItem('${deviceId}')">
+    🗑 Delete
+  </button>
+</div>
         `;
         dataList.appendChild(div);
         
