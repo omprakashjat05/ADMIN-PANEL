@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=700, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=900, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes" />
   <title>🔥 GitHub Admin Panel - Enhanced</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -1461,6 +1461,44 @@
         min-width: 120px;
       }
     }
+    .row-inputs{
+  display: flex;
+  gap: 12px;
+}
+
+.field-wrap{
+  flex: 1;
+  position: relative; /* dropdown anchor */
+}
+.offline-row{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Buttons group = 2x width */
+.offline-btn-group{
+  flex: 2;
+  display: flex;
+  gap: 8px;
+}
+
+/* −1 / +1 equal */
+.adjust-btn{
+  flex: 1;
+  padding: 14px 0;
+  font-size: 18px;
+}
+
+/* ✅ Allow Offline ko visually bada karo */
+.offline-label{
+  flex: 1.5;                 /* 👈 pehle 1 tha, ab bada */
+  margin: 0;
+  white-space: nowrap;
+  padding: 14px 16px;        /* 👈 box size bada */
+  justify-content: center;   /* 👈 center align */
+}
   </style>
 </head>
 <body data-theme="gold">
@@ -1631,11 +1669,28 @@ repo3"></textarea>
             <input id="deviceId" placeholder="Enter device ID" type="text" class="modal-input" />
           </div>
           
-          <!-- License Key -->
-          <div class="input-group">
-            <label class="input-label">🔑 License Key</label>
-            <input id="key" placeholder="Enter license key" type="text" class="modal-input" />
-          </div>
+         <div class="input-group">
+  <label class="input-label">🔑 License Key</label>
+
+  <div style="display:flex; gap:10px;">
+    <input id="key" placeholder="Enter or generate license key"
+           type="text"
+           class="modal-input"
+           style="flex:1;" />
+
+    <button type="button"
+        onclick="generateRandomKey()"
+        class="quick-date-btn"
+        style="
+          padding:14px 26px;
+          min-width:120px;
+          font-size:20px;
+        ">
+  🎲
+</button>
+  </div>
+
+</div>
           
           <!-- Expiry Date -->
           <div class="input-group">
@@ -1649,34 +1704,71 @@ repo3"></textarea>
               </div>
             </div>
           </div>
+<div class="input-group">
+  <div class="offline-row">
+
+    <!-- -1 / +1 Buttons -->
+    <div class="offline-btn-group">
+      <button type="button"
+              class="quick-date-btn adjust-btn"
+              onclick="adjustExpiry(-1)">
+        −1
+      </button>
+
+      <button type="button"
+              class="quick-date-btn adjust-btn"
+              onclick="adjustExpiry(1)">
+        +1
+      </button>
+    </div>
+
+    <!-- Allow Offline -->
+    <label class="checkbox-label offline-label">
+      <input id="allowOffline" type="checkbox" />
+      <span>✓ Allow Offline</span>
+    </label>
+
+  </div>
+</div>          
+<div class="input-group">
+
+  <div class="row-inputs">
+
+    <!-- Username -->
+    <div class="field-wrap">
+      <label class="input-label">👤 User Name</label>
+      <input id="username"
+             placeholder="Enter user name"
+             type="text"
+             class="modal-input" />
+
+      <div id="userSuggestions" class="user-suggestions"></div>
+    </div>
+
+    <!-- Position -->
+    <div class="field-wrap">
+      <label class="input-label">📍 Position</label>
+      <input id="positionInput"
+             placeholder="Enter position"
+             type="text"
+             class="modal-input"
+             autocomplete="off" />
+
+      <div id="positionSuggestions" class="position-suggestions"></div>
+    </div>
+
+  </div>
+  </div>
+  
+
+  <span id="positionInfo"
+        style="color:#666;font-size:12px;margin-top:6px;">
+    (Total: 0 keys)
+  </span>
+
+</div>
           
-          <!-- User Name -->
-          <div class="input-group">
-            <label class="input-label">👤 User Name</label>
-            <div style="position: relative;">
-              <input id="username" placeholder="Enter user name" type="text" class="modal-input" />
-              <div id="userSuggestions" class="user-suggestions"></div>
-            </div>
-          </div>
-          
-          <!-- Allow Offline -->
-          <div class="input-group">
-            <label class="checkbox-label">
-              <input id="allowOffline" type="checkbox" style="width: auto; margin: 0;" />
-              <span>✓ Allow Offline</span>
-            </label>
-          </div>
-          
-          <!-- Position -->
-          <div class="input-group">
-            <label class="input-label">📍 Position</label>
-            <div style="position: relative;">
-              <input id="positionInput" placeholder="Type position or search user..." type="text" class="modal-input" autocomplete="off" />
-              <div class="position-suggestions" id="positionSuggestions"></div>
-            </div>
-            <span id="positionInfo" style="color: #666; font-size: 0.85em; margin-top: 6px; display: block;">(Total: 0 keys)</span>
-          </div>
-        </div>
+                 
         
         <!-- Action Buttons -->
         <div style="display: flex; gap: 12px; margin-top: 24px;">
@@ -2705,6 +2797,56 @@ repo3"></textarea>
         topBtn.style.display = 'none';
       }
     });
+    function generateRandomKey() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const existingKeys = allDataArray.map(x => x.key); // already saved keys
+
+  let newKey = "";
+  let lengthOptions = [11, 12, 13];
+
+  do {
+    const len = lengthOptions[Math.floor(Math.random() * lengthOptions.length)];
+    newKey = "";
+
+    for (let i = 0; i < len; i++) {
+      newKey += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+  } while (existingKeys.includes(newKey));
+
+  const keyInput = document.getElementById("key");
+  keyInput.value = newKey;
+
+  // visual feedback
+  keyInput.style.borderColor = "var(--success)";
+  setTimeout(() => keyInput.style.borderColor = "", 600);
+}
+window.adjustExpiry = function(days) {
+  const input = document.getElementById('expiry');
+  if (!input.value) return;
+
+  const parts = input.value.split('-');
+  if (parts.length !== 3) return;
+
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1;
+  const year = parseInt(parts[2], 10);
+
+  const d = new Date(year, month, day);
+  if (isNaN(d.getTime())) return;
+
+  d.setDate(d.getDate() + days);
+
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yy = d.getFullYear();
+
+  input.value = `${dd}-${mm}-${yy}`;
+
+  // visual feedback
+  input.style.borderColor = 'var(--accent)';
+  setTimeout(() => input.style.borderColor = '', 400);
+};
   </script>
 </body>
 </html>
