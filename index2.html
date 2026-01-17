@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no" />
+  <title>Verification Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #f5e6d3;
+      --bg-secondary: #e8d5c4;
+      --bg-card: #fff9f0;
+      --bg-card-expired: linear-gradient(145deg, #ffe5e5 0%, #ffd6d6 100%);
+      --bg-input: #ffffff;
+      --accent: #c4956a;
+      --accent-hover: #b8896a;
+      --accent-light: rgba(196, 149, 106, 0.15);
+      --text-primary: #333;
+      --text-secondary: #666;
+      --border: #d4c4b0;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --card-radius: 12px;
+      --font-main: 'Poppins', sans-serif;
+      --font-mono: 'Courier New', monospace;
+      --header-bg: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      --card-border: 4px solid var(--accent);
+      --expired-border: 4px solid var(--danger);
+    }
+
+    /* ===== STARTER THEME (Warm Cream) ===== */
+    [data-theme="starter"] {
+      --bg-primary: #f5e6d3;
+      --bg-secondary: #e8d5c4;
+      --bg-card: #fff9f0;
+      --accent: #c4956a;
+      --accent-hover: #b8896a;
+      --border: #d4c4b0;
+      --header-bg: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+      --card-radius: 12px;
+      --font-main: 'Poppins', sans-serif;
+    }
+
+    /* ===== STARTER PRO THEME (Dark Gold) ===== */
+    [data-theme="starter-pro"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #0d0d0d;
+      --bg-card: #252525;
+      --bg-card-expired: linear-gradient(145deg, #3d1a1a 0%, #2d1515 100%);
+      --accent: #ffc107;
+      --accent-hover: #ffb300;
+      --accent-light: rgba(255, 193, 7, 0.15);
+      --text-primary: #f5f5f5;
+      --text-secondary: #aaa;
+      --border: #333;
+      --header-bg: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      --card-shadow: 0 4px 15px rgba(255, 193, 7, 0.1);
+      --card-radius: 10px;
+      --font-main: 'Poppins', sans-serif;
+    }
+
+    [data-theme="starter-pro"] .header h1 { color: #111; }
+    [data-theme="starter-pro"] .header-logo { fill: #111; }
+    [data-theme="starter-pro"] .header-btn { background: #111; color: #ffc107; }
+    [data-theme="starter-pro"] .user-name { color: #111; }
+    [data-theme="starter-pro"] .user-username { color: #333; }
+    [data-theme="starter-pro"] .device-card { border-left: 4px solid #ffc107; background: linear-gradient(145deg, #252525 0%, #1f1f1f 100%); }
+    [data-theme="starter-pro"] .device-id { color: #ffc107; }
+    [data-theme="starter-pro"] .key-value { background: rgba(255,193,7,0.15); color: #ffc107; }
+    [data-theme="starter-pro"] .json-editor { background: #0a0a0a; border-color: #ffc107; }
+
+    /* ===== STARTER MAX THEME (Neon Cyber) ===== */
+    [data-theme="starter-max"] {
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #050810;
+      --bg-card: #0d1220;
+      --bg-card-expired: linear-gradient(145deg, #2a1a2a 0%, #1a1020 100%);
+      --accent: #00f5ff;
+      --accent-hover: #00d4e0;
+      --accent-light: rgba(0, 245, 255, 0.1);
+      --text-primary: #e0f7ff;
+      --text-secondary: #7fdbff;
+      --border: #1a3a4a;
+      --header-bg: linear-gradient(135deg, #0d1220 0%, #1a2a3a 100%);
+      --card-shadow: 0 0 20px rgba(0, 245, 255, 0.15);
+      --card-radius: 5px;
+      --font-main: 'Orbitron', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    [data-theme="starter-max"] body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: 
+        linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px),
+        linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    [data-theme="starter-max"] .header { border-bottom: 2px solid #00f5ff; box-shadow: 0 0 30px rgba(0,245,255,0.2); }
+    [data-theme="starter-max"] .device-card { 
+      border: 1px solid #00f5ff; 
+      border-left: 4px solid #00f5ff;
+      box-shadow: 0 0 15px rgba(0,245,255,0.1), inset 0 0 20px rgba(0,245,255,0.03);
+      background: linear-gradient(145deg, #0d1220 0%, #0a0e18 100%);
+    }
+    [data-theme="starter-max"] .device-card.expired { border-color: #ff0080; box-shadow: 0 0 15px rgba(255,0,128,0.2); }
+    [data-theme="starter-max"] .device-id { color: #00f5ff; text-shadow: 0 0 10px rgba(0,245,255,0.5); }
+    [data-theme="starter-max"] .key-value { background: rgba(0,245,255,0.1); color: #00f5ff; border: 1px solid rgba(0,245,255,0.3); }
+    [data-theme="starter-max"] .stats-card { background: linear-gradient(135deg, #0d1220 0%, #1a2a3a 100%); border: 1px solid #00f5ff; box-shadow: 0 0 25px rgba(0,245,255,0.2); }
+    [data-theme="starter-max"] .expired-badge { background: #ff0080; box-shadow: 0 0 10px rgba(255,0,128,0.5); }
+    [data-theme="starter-max"] .json-editor { background: #050810; border: 1px solid #00f5ff; color: #00f5ff; }
+    [data-theme="starter-max"] .sub-tabs, [data-theme="starter-max"] .filter-tab, [data-theme="starter-max"] .search-bar { border: 1px solid #1a3a4a; }
+    [data-theme="starter-max"] .sub-tab.active { background: #00f5ff; color: #0a0e1a; }
+
+    /* ===== STARTER DEVELOPER THEME (Matrix Green) ===== */
+    [data-theme="starter-developer"] {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #050505;
+      --bg-card: #0f0f0f;
+      --bg-card-expired: linear-gradient(145deg, #1a0a0a 0%, #150505 100%);
+      --accent: #00ff41;
+      --accent-hover: #00cc33;
+      --accent-light: rgba(0, 255, 65, 0.1);
+      --text-primary: #00ff41;
+      --text-secondary: #00aa2a;
+      --border: #00ff41;
+      --header-bg: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 100%);
+      --card-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+      --card-radius: 0px;
+      --font-main: 'Share Tech Mono', monospace;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    [data-theme="starter-developer"] body::before {
+      content: ">";
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      color: #00ff41;
+      font-family: 'Share Tech Mono', monospace;
+      animation: blink 1s infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+    [data-theme="starter-developer"] .header { border-bottom: 1px solid #00ff41; }
+    [data-theme="starter-developer"] .device-card { 
+      border: 1px solid #00ff41; 
+      border-left: 3px solid #00ff41;
+      background: #0a0a0a;
+    }
+    [data-theme="starter-developer"] .device-card.expired { border-color: #ff0000; }
+    [data-theme="starter-developer"] .device-id { color: #00ff41; }
+    [data-theme="starter-developer"] .user-name-card, [data-theme="starter-developer"] .expiry-text { color: #00aa2a; }
+    [data-theme="starter-developer"] .key-value { background: #050505; color: #00ff41; border: 1px solid #00ff41; }
+    [data-theme="starter-developer"] .stats-card { background: #0a0a0a; border: 1px solid #00ff41; }
+    [data-theme="starter-developer"] .expired-badge { background: #ff0000; }
+    [data-theme="starter-developer"] .sub-tabs, [data-theme="starter-developer"] .search-bar, [data-theme="starter-developer"] .filter-tab { 
+      background: #0a0a0a; border: 1px solid #00ff41; 
+    }
+    [data-theme="starter-developer"] .sub-tab.active, [data-theme="starter-developer"] .filter-tab.active { background: #00ff41; color: #0a0a0a; }
+    [data-theme="starter-developer"] .fab-button { background: #00ff41; }
+    [data-theme="starter-developer"] .fab-button svg { color: #0a0a0a; }
+    [data-theme="starter-developer"] .bottom-nav { background: #0a0a0a; border-top: 1px solid #00ff41; }
+    [data-theme="starter-developer"] .json-editor { background: #000; border: 1px solid #00ff41; }
+
+    /* ===== STARTER DEVELOPER PRO THEME (Purple Haze) ===== */
+    [data-theme="starter-developer-pro"] {
+      --bg-primary: #1a0a2e;
+      --bg-secondary: #0f0518;
+      --bg-card: #241040;
+      --bg-card-expired: linear-gradient(145deg, #3a1a2a 0%, #2a1020 100%);
+      --accent: #bf00ff;
+      --accent-hover: #9900cc;
+      --accent-light: rgba(191, 0, 255, 0.15);
+      --text-primary: #e8d0ff;
+      --text-secondary: #b080d0;
+      --border: #4a2080;
+      --header-bg: linear-gradient(135deg, #2a1050 0%, #1a0a30 100%);
+      --card-shadow: 0 4px 20px rgba(191, 0, 255, 0.15);
+      --card-radius: 16px;
+      --font-main: 'Rajdhani', sans-serif;
+    }
+
+    [data-theme="starter-developer-pro"] body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(191,0,255,0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    [data-theme="starter-developer-pro"] .device-card { 
+      border-left: 4px solid #bf00ff;
+      background: linear-gradient(145deg, #241040 0%, #1a0830 100%);
+      box-shadow: 0 4px 20px rgba(191,0,255,0.1);
+    }
+    [data-theme="starter-developer-pro"] .device-card.expired { border-left-color: #ff3366; }
+    [data-theme="starter-developer-pro"] .device-id { color: #bf00ff; }
+    [data-theme="starter-developer-pro"] .key-value { background: rgba(191,0,255,0.15); color: #d070ff; }
+    [data-theme="starter-developer-pro"] .stats-card { background: linear-gradient(135deg, #bf00ff 0%, #8000aa 100%); }
+    [data-theme="starter-developer-pro"] .expired-badge { background: linear-gradient(135deg, #ff3366 0%, #cc2952 100%); }
+    [data-theme="starter-developer-pro"] .fab-button { background: linear-gradient(135deg, #bf00ff 0%, #8000aa 100%); box-shadow: 0 4px 20px rgba(191,0,255,0.4); }
+    [data-theme="starter-developer-pro"] .json-editor { background: #0f0518; border-color: #4a2080; color: #bf00ff; }
+
+    body {
+      font-family: var(--font-main);
+      background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding-bottom: 90px;
+      transition: all 0.3s ease;
+    }
+
+    .header {
+      background: var(--header-bg);
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    .header h1 {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-logo { width: 24px; height: 24px; fill: var(--accent); }
+
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent); }
+    .user-details { text-align: right; }
+    .user-name { font-weight: 600; color: var(--accent); font-size: 11px; }
+    .user-username { font-size: 9px; color: #999; }
+    .header-btn { background: var(--danger); color: white; border: none; border-radius: 6px; padding: 6px 12px; font-weight: 600; font-size: 11px; cursor: pointer; }
+
+    .container { padding: 12px 8px; }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--card-radius);
+      padding: 15px;
+      margin-bottom: 12px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .card h3 { color: var(--accent); font-size: 15px; margin-bottom: 12px; }
+
+    .login-card { max-width: 400px; margin: 20px auto; }
+    .login-card p, .login-card ol { color: var(--text-secondary); font-size: 12px; line-height: 1.6; margin: 10px 0; }
+    .login-card ol { margin-left: 18px; }
+    .login-card ol a { color: var(--accent); text-decoration: none; }
+
+    .info-box { background: var(--accent-light); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; margin: 10px 0; }
+
+    .input-group { margin: 12px 0; }
+    .input-group label { display: block; color: var(--accent); font-weight: 600; margin-bottom: 6px; font-size: 12px; }
+    .input-group input, .input-group textarea {
+      width: 100%; padding: 10px 12px; background: var(--bg-input); color: var(--text-primary);
+      border: 2px solid var(--border); border-radius: 8px; font-size: 13px; font-family: var(--font-main); outline: none;
+    }
+    .input-group input:focus, .input-group textarea:focus { border-color: var(--accent); }
+    .input-group textarea { min-height: 80px; resize: vertical; }
+
+    .login-btn {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: #111; border: none; border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 700; cursor: pointer; display: block; width: 100%; margin-top: 15px;
+    }
+
+    .stats-card {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; color: white;
+      display: flex; justify-content: space-around; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 700; }
+    .stat-label { font-size: 10px; opacity: 0.9; text-transform: uppercase; }
+
+    .sub-tabs {
+      display: flex; gap: 5px; margin-bottom: 12px; background: var(--bg-card); padding: 5px; border-radius: 10px; border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .sub-tab {
+      flex: 1; padding: 8px; background: transparent; border: none; color: var(--text-secondary);
+      font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.2s; font-family: var(--font-main);
+    }
+    .sub-tab.active { background: var(--accent); color: white; }
+
+    .search-bar {
+      background: var(--bg-card); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); transition: all 0.3s ease;
+    }
+    .search-bar input { flex: 1; border: none; outline: none; font-size: 13px; font-family: var(--font-main); color: var(--text-primary); background: transparent; }
+    .search-bar svg { width: 18px; height: 18px; color: var(--text-secondary); }
+
+    .filter-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .filter-tab {
+      padding: 6px 14px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 20px;
+      font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
+    }
+    .filter-tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    .section-title { color: var(--accent); font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+
+    .device-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+    .device-card {
+      background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+      border-radius: var(--card-radius); padding: 12px; border-left: var(--card-border);
+      box-shadow: var(--card-shadow); position: relative; scroll-margin-top: 80px; transition: all 0.3s ease;
+    }
+    .device-card.expired { background: var(--bg-card-expired); border-left: var(--expired-border); }
+    .device-card.expired .device-id { color: var(--danger); }
+
+    @keyframes highlightPulse {
+      0%, 100% { box-shadow: 0 0 0 0 var(--accent); }
+      50% { box-shadow: 0 0 20px 5px var(--accent-light); }
+    }
+    .device-card.highlight { animation: highlightPulse 0.6s ease-in-out 5; }
+
+    .device-id { color: var(--accent); font-size: 11px; font-weight: 700; margin-bottom: 2px; word-break: break-all; line-height: 1.2; }
+    .user-name-card { color: var(--text-secondary); font-size: 11px; font-weight: 500; margin-bottom: 5px; }
+    .key-value {
+      color: var(--text-primary); font-size: 12px; font-weight: 700; font-family: var(--font-mono);
+      background: var(--accent-light); padding: 5px 8px; border-radius: 5px; display: block;
+      margin-bottom: 6px; cursor: pointer; word-break: break-all; letter-spacing: 0.3px;
+    }
+
+    .meta-row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .expiry-text { color: var(--text-secondary); font-size: 10px; font-weight: 500; }
+    .status-badge { font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase; }
+    .status-badge.online { background: var(--success); color: white; }
+    .status-badge.offline { background: #7f8c8d; color: white; }
+
+    /* EXPIRED Badge - Bottom Left */
+    .expired-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: var(--danger);
+      color: white;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-actions { display: flex; gap: 4px; justify-content: flex-end; }
+    .action-btn {
+      width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: transform 0.2s;
+    }
+    .action-btn:active { transform: scale(0.9); }
+    .action-btn.edit { background: #e8e8e8; color: #666; }
+    .action-btn.delete { background: #ffe5e5; color: var(--danger); }
+    .action-btn.disable { background: #fff3e0; color: var(--warning); }
+    .action-btn svg { width: 14px; height: 14px; }
+
+    .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
+    .repo-card { background: var(--bg-card); padding: 12px; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; }
+    .repo-card:hover, .repo-card.active { border-color: var(--accent); background: var(--accent-light); }
+    .repo-name { font-weight: 600; color: var(--accent); font-size: 12px; margin-bottom: 3px; }
+    .repo-description { font-size: 10px; color: var(--text-secondary); margin-bottom: 4px; }
+    .repo-stats { font-size: 9px; color: var(--text-secondary); }
+
+    .file-selector select {
+      width: 100%; padding: 10px; background: var(--bg-card); color: var(--text-primary);
+      border: 2px solid var(--border); border-radius: 8px; font-size: 12px; font-family: var(--font-main); cursor: pointer; margin-top: 10px;
+    }
+
+    .status-bar {
+      background: var(--bg-card); padding: 8px 12px; border-radius: 8px; display: flex;
+      justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid var(--border); font-size: 11px;
+    }
+    .status-bar .status { color: var(--success); font-weight: 600; }
+    .status-bar .actions { display: flex; gap: 6px; }
+    .status-bar button { padding: 5px 10px; border-radius: 6px; border: none; font-size: 10px; font-weight: 600; cursor: pointer; background: var(--accent); color: #111; }
+
+    .json-editor {
+      width: 100%; min-height: 350px; padding: 12px; background: #1a1a1a; color: #00ff9c;
+      border: 2px solid var(--border); border-radius: 10px; font-family: var(--font-mono); font-size: 11px; resize: vertical; outline: none;
+      transition: all 0.3s ease;
+    }
+    .json-buttons { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .json-buttons button { padding: 8px 14px; border-radius: 8px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--font-main); }
+    .json-buttons button.save { background: var(--success); color: white; }
+    .json-buttons button.format { background: var(--accent); color: #111; }
+    .json-buttons button.copy { background: #3498db; color: white; }
+    .json-buttons button.reset { background: var(--danger); color: white; }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      padding: 10px 20px; display: flex; justify-content: space-around; align-items: center;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.1); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 99;
+      transition: all 0.3s ease;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); font-size: 10px; font-weight: 500; cursor: pointer; padding: 5px 15px; }
+    .nav-item.active { color: var(--accent); }
+    .nav-item svg { width: 22px; height: 22px; margin-bottom: 2px; }
+
+    .fab-button {
+      width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; margin-top: -25px; border: none;
+      transition: all 0.3s ease;
+    }
+    .fab-button svg { width: 24px; height: 24px; color: white; }
+
+    #topBtn {
+      position: fixed; right: 12px; bottom: 85px; width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 2px solid var(--border); color: var(--accent); font-size: 18px;
+      display: none; align-items: center; justify-content: center; z-index: 98; cursor: pointer;
+    }
+
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
+      display: none; align-items: flex-start; justify-content: center; padding: 3vh 10px 20px; z-index: 10000; overflow-y: auto;
+    }
+    .modal-bg.show { display: flex; }
+    .modal-box { width: 100%; max-width: 420px; background: var(--bg-card); border-radius: 16px; overflow: hidden; }
+    .modal-header { padding: 14px 16px; background: var(--header-bg); display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 14px; font-weight: 600; color: white; }
+    .modal-close { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 16px; cursor: pointer; }
+    .modal-body { padding: 16px; background: var(--bg-card); }
+
+    .modal-input-group { margin-bottom: 12px; }
+    .modal-input-group label { display: block; color: var(--accent); font-weight: 600; margin-bottom: 5px; font-size: 11px; }
+    .modal-input { width: 100%; padding: 10px 12px; background: var(--bg-input); border: 2px solid var(--border); color: var(--text-primary); border-radius: 8px; font-size: 13px; outline: none; font-family: var(--font-main); }
+    .modal-input:focus { border-color: var(--accent); }
+    .modal-row { display: flex; gap: 8px; }
+    .modal-row .modal-input-group { flex: 1; }
+
+    .quick-btns { display: flex; gap: 5px; margin-top: 6px; }
+    .quick-btn { flex: 1; padding: 8px; background: var(--accent); color: #111; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: var(--font-main); }
+
+    .checkbox-label { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-input); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-primary); }
+    .checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); }
+
+    .modal-buttons { display: flex; gap: 8px; margin-top: 12px; }
+    .modal-save-btn { flex: 1; padding: 12px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: #111; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: var(--font-main); }
+    .modal-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .modal-cancel-btn { padding: 12px 16px; background: #666; color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-main); }
+
+    .spinner { width: 14px; height: 14px; border: 2px solid #111; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: 500; opacity: 0; transition: transform 0.3s, opacity 0.3s; z-index: 10001; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    .empty-state { text-align: center; padding: 40px 15px; color: var(--text-secondary); grid-column: 1 / -1; }
+    .empty-state p { font-size: 13px; margin-bottom: 12px; }
+    .empty-state button { padding: 12px 24px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); border: none; border-radius: 25px; font-weight: 700; color: #111; cursor: pointer; font-family: var(--font-main); font-size: 13px; }
+
+    .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-radius: 8px; max-height: 120px; overflow-y: auto; z-index: 100; display: none; }
+    .suggestions.show { display: block; }
+    .suggestion-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 11px; }
+    .suggestion-item:hover { background: var(--accent-light); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Theme Selector */
+    .theme-selector { margin-top: 15px; }
+    .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+    .theme-option {
+      padding: 12px 10px; border-radius: 10px; cursor: pointer; text-align: center; font-size: 11px; font-weight: 600;
+      border: 2px solid transparent; transition: all 0.2s;
+    }
+    .theme-option:hover { transform: scale(1.02); }
+    .theme-option.active { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+    .theme-starter { background: linear-gradient(135deg, #c4956a, #b8896a); color: #111; }
+    .theme-starter-pro { background: linear-gradient(135deg, #ffc107, #ff9800); color: #111; }
+    .theme-starter-max { background: linear-gradient(135deg, #00f5ff, #0080ff); color: #111; }
+    .theme-starter-developer { background: linear-gradient(135deg, #00ff41, #00aa2a); color: #111; }
+    .theme-starter-developer-pro { background: linear-gradient(135deg, #bf00ff, #8000aa); color: white; }
+  </style>
+</head>
+<body data-theme="starter">
+
+  <div class="header">
+    <h1>
+      <svg class="header-logo" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+      OP ADMIN Panel
+    </h1>
+    <div class="user-info" id="userInfo" style="display:none;">
+      <div class="user-details">
+        <div class="user-name" id="userName"></div>
+        <div class="user-username" id="userUsername"></div>
+      </div>
+      <img class="user-avatar" id="userAvatar" src="" alt="">
+      <button class="header-btn" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="loginSection">
+      <div class="card login-card">
+        <h3>🔐 GitHub Token Login</h3>
+        <div class="info-box"><p style="margin:0;font-size:11px;"><strong>⚠️ Token Generate Steps:</strong></p></div>
+        <ol>
+          <li>Go to: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></li>
+          <li><strong>"Generate new token (classic)"</strong></li>
+          <li>Permissions: <strong>✅ repo</strong></li>
+          <li>Generate & copy token</li>
+        </ol>
+        <div class="input-group">
+          <label>🔑 GitHub Token:</label>
+          <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" />
+        </div>
+        <div class="input-group">
+          <label>📁 Repository Filter (optional):</label>
+          <textarea id="repoFilterInput" placeholder="repo1, repo2, repo3"></textarea>
+        </div>
+        <button class="login-btn" id="loginBtn">🚀 Connect to GitHub</button>
+      </div>
+    </div>
+
+    <div id="mainPanel" style="display:none;">
+      <div class="tab-content active" id="tab-devices">
+        <div class="stats-card">
+          <div class="stat-item"><div class="stat-value" id="totalCount">0</div><div class="stat-label">Total</div></div>
+          <div class="stat-item"><div class="stat-value" id="activeCount">0</div><div class="stat-label">Active</div></div>
+          <div class="stat-item"><div class="stat-value" id="expiredCount">0</div><div class="stat-label">Expired</div></div>
+        </div>
+
+        <div class="sub-tabs">
+          <button class="sub-tab active" data-subtab="keys">🔑 Keys</button>
+          <button class="sub-tab" data-subtab="editor">📝 JSON</button>
+        </div>
+
+        <div class="tab-content active" id="subtab-keys">
+          <div class="search-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search devices..." id="searchInput">
+          </div>
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">📜 All</button>
+            <button class="filter-tab" data-filter="active">✅ Active</button>
+            <button class="filter-tab" data-filter="expired">⚠️ Expired</button>
+          </div>
+          <div class="section-title">Device Keys</div>
+          <div id="dataList" class="device-grid"></div>
+        </div>
+
+        <div class="tab-content" id="subtab-editor">
+          <textarea class="json-editor" id="rawJsonEditor" placeholder="JSON data..."></textarea>
+          <div class="json-buttons">
+            <button class="save" id="updateFromJsonBtn">📤 Save</button>
+            <button class="format" id="formatJsonBtn">✨ Format</button>
+            <button class="copy" id="copyJsonBtn">📋 Copy</button>
+            <button class="reset" id="resetJsonBtn">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-settings">
+        <div class="card">
+          <h3>📁 Select Repository</h3>
+          <div class="status-bar">
+            <div class="status" id="repoStatus">⚡ Ready</div>
+            <div class="actions">
+              <button id="filterBtn">🔍 Filter</button>
+              <button id="refreshReposBtn">🔄 Refresh</button>
+            </div>
+          </div>
+          <div class="repo-grid" id="repoGrid"></div>
+          <div class="file-selector" id="fileSelector" style="display:none;">
+            <select id="fileSelect"><option value="">-- Select JSON file --</option></select>
+          </div>
+        </div>
+
+        <div class="card theme-selector">
+          <h3>🎨 Select Theme</h3>
+          <div class="theme-grid">
+            <div class="theme-option theme-starter active" data-theme="starter">☀️ Starter</div>
+            <div class="theme-option theme-starter-pro" data-theme="starter-pro">🌟 Starter Pro</div>
+            <div class="theme-option theme-starter-max" data-theme="starter-max">⚡ Starter Max</div>
+            <div class="theme-option theme-starter-developer" data-theme="starter-developer">💻 Developer</div>
+            <div class="theme-option theme-starter-developer-pro" data-theme="starter-developer-pro">🚀 Dev Pro</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav" id="bottomNav" style="display:none;">
+    <div class="nav-item active" id="navDevices" onclick="switchToTab('devices')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Devices
+    </div>
+    <button class="fab-button" onclick="openKeyModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+    <div class="nav-item" id="navSettings" onclick="switchToTab('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+  </div>
+
+  <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇧</button>
+
+  <div class="modal-bg" id="keyModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">➕ Add License Key</div>
+        <button class="modal-close" onclick="closeKeyModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-input-group">
+          <label>📱 Device ID</label>
+          <input id="deviceId" placeholder="Enter device ID" type="text" class="modal-input" />
+        </div>
+        <div class="modal-input-group">
+          <label>🔑 License Key</label>
+          <div style="display:flex;gap:6px;">
+            <input id="key" placeholder="Enter or generate key" type="text" class="modal-input" style="flex:1;" />
+            <button class="quick-btn" onclick="generateRandomKey()" style="flex:0 0 45px;">🎲</button>
+          </div>
+        </div>
+        <div class="modal-input-group">
+          <label>📅 Expiry Date</label>
+          <input id="expiry" placeholder="dd-mm-yyyy" type="text" class="modal-input" />
+          <div class="quick-btns">
+            <button class="quick-btn" onclick="setQuickDate(7)">7d</button>
+            <button class="quick-btn" onclick="setQuickDate(15)">15d</button>
+            <button class="quick-btn" onclick="setQuickDate(30)">30d</button>
+            <button class="quick-btn" onclick="adjustExpiry(-1)">−1</button>
+            <button class="quick-btn" onclick="adjustExpiry(1)">+1</button>
+          </div>
+        </div>
+        <div class="modal-input-group">
+          <label class="checkbox-label"><input id="allowOffline" type="checkbox" /><span>✓ Allow Offline</span></label>
+        </div>
+        <div class="modal-row">
+          <div class="modal-input-group" style="position:relative;">
+            <label>👤 User Name</label>
+            <input id="username" placeholder="User name" type="text" class="modal-input" />
+            <div id="userSuggestions" class="suggestions"></div>
+          </div>
+          <div class="modal-input-group" style="position:relative;">
+            <label>📍 Position</label>
+            <input id="positionInput" placeholder="#" type="text" class="modal-input" autocomplete="off" />
+            <div id="positionSuggestions" class="suggestions"></div>
+          </div>
+        </div>
+        <span id="positionInfo" style="color:var(--text-secondary);font-size:10px;">(Total: 0 keys)</span>
+        <div class="modal-buttons">
+          <button class="modal-save-btn" id="saveBtn">💾 Save to GitHub</button>
+          <button class="modal-cancel-btn" onclick="closeKeyModal()">✕ Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copied!</div>
+
+  <script>
+    let accessToken = null, userData = null, repositories = [], repoFilter = [], selectedRepo = null, selectedFile = null;
+    let currentData = {}, currentUpdateId = null, fileSha = null, allDataArray = [], currentFilter = 'all';
+
+    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    window.copyKey = function(key) { navigator.clipboard.writeText(key); showToast('✅ Key copied!'); }
+
+    function setTomorrowExpiry() { const d = new Date(); d.setDate(d.getDate() + 1); document.getElementById('expiry').value = formatDate(d); }
+    function formatDate(d) { return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear(); }
+    window.setQuickDate = function(days) { const d = new Date(); d.setDate(d.getDate() + days); document.getElementById('expiry').value = formatDate(d); }
+    window.adjustExpiry = function(days) { const input = document.getElementById('expiry'); if (!input.value) return; const parts = input.value.split('-'); if (parts.length !== 3) return; const d = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0])); if (isNaN(d.getTime())) return; d.setDate(d.getDate() + days); input.value = formatDate(d); }
+
+    window.generateRandomKey = function() { const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; const existing = allDataArray.map(x => x.key); let key = ""; const lens = [11, 12, 13]; do { const len = lens[Math.floor(Math.random() * lens.length)]; key = ""; for (let i = 0; i < len; i++) key += chars.charAt(Math.floor(Math.random() * chars.length)); } while (existing.includes(key)); document.getElementById('key').value = key; }
+
+    window.switchToTab = function(tab) { document.querySelectorAll('#mainPanel > .tab-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.getElementById('navDevices').classList.toggle('active', tab === 'devices'); document.getElementById('navSettings').classList.toggle('active', tab === 'settings'); }
+
+    window.openKeyModal = function() { document.getElementById('keyModal').classList.add('show'); document.body.style.overflow = 'hidden'; if (!currentUpdateId) { document.getElementById('modalTitle').innerHTML = '➕ Add License Key'; setTomorrowExpiry(); } }
+    window.closeKeyModal = function() { document.getElementById('keyModal').classList.remove('show'); document.body.style.overflow = ''; setTimeout(() => { if (!document.getElementById('keyModal').classList.contains('show')) { document.getElementById('deviceId').value = ''; document.getElementById('key').value = ''; setTomorrowExpiry(); document.getElementById('username').value = ''; document.getElementById('allowOffline').checked = false; document.getElementById('positionInput').value = ''; document.getElementById('modalTitle').innerHTML = '➕ Add License Key'; currentUpdateId = null; } }, 300); }
+
+    function isExpired(expiryDate) { if (!expiryDate) return false; try { const parts = expiryDate.split('-'); if (parts.length !== 3) return false; const expiry = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0])); const today = new Date(); today.setHours(0,0,0,0); return expiry <= today; } catch (e) { return false; } }
+
+    function scrollToElement(el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    function highlightElement(el) { el.classList.add('highlight'); setTimeout(() => el.classList.remove('highlight'), 3500); }
+
+    // Theme
+    function loadTheme() { const saved = localStorage.getItem('rmo_theme') || 'starter'; document.body.dataset.theme = saved; updateActiveTheme(saved); }
+    function updateActiveTheme(theme) { document.querySelectorAll('.theme-option').forEach(opt => { opt.classList.toggle('active', opt.dataset.theme === theme); }); }
+    document.querySelectorAll('.theme-option').forEach(opt => { opt.addEventListener('click', () => { const theme = opt.dataset.theme; document.body.dataset.theme = theme; localStorage.setItem('rmo_theme', theme); updateActiveTheme(theme); }); });
+    loadTheme();
+
+    function checkExistingSession() { const token = localStorage.getItem('github_token'); const filter = localStorage.getItem('repo_filter'); if (token) { accessToken = token; if (filter) repoFilter = JSON.parse(filter); initializeApp(); } }
+
+    document.getElementById('loginBtn').addEventListener('click', async () => { const token = document.getElementById('tokenInput').value.trim(); if (!token) { alert('⚠️ Enter GitHub token!'); return; } if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) { alert('⚠️ Invalid token!'); return; } const filterText = document.getElementById('repoFilterInput').value.trim(); if (filterText) { repoFilter = filterText.split(/[,\n]/).map(l => l.trim()).filter(l => l.length > 0); localStorage.setItem('repo_filter', JSON.stringify(repoFilter)); } else { repoFilter = []; localStorage.removeItem('repo_filter'); } accessToken = token; localStorage.setItem('github_token', accessToken); try { await initializeApp(); } catch (error) { alert('❌ Invalid token: ' + error.message); localStorage.removeItem('github_token'); accessToken = null; } });
+
+    async function initializeApp() { await fetchUserData(); await fetchRepositories(); document.getElementById('loginSection').style.display = 'none'; document.getElementById('mainPanel').style.display = 'block'; document.getElementById('userInfo').style.display = 'flex'; document.getElementById('bottomNav').style.display = 'flex'; switchToTab('settings'); }
+
+    async function fetchUserData() { const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } }); if (!res.ok) throw new Error('Failed'); userData = await res.json(); document.getElementById('userName').textContent = userData.name || userData.login; document.getElementById('userUsername').textContent = '@' + userData.login; document.getElementById('userAvatar').src = userData.avatar_url; }
+
+    async function fetchRepositories() { document.getElementById('repoStatus').innerHTML = '🔄 Loading...'; const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } }); if (!res.ok) throw new Error('Failed'); let all = await res.json(); repositories = repoFilter.length > 0 ? all.filter(r => repoFilter.includes(r.name)) : all; displayRepositories(); document.getElementById('repoStatus').innerHTML = `✅ ${repositories.length} repos`; }
+
+    function displayRepositories() { const grid = document.getElementById('repoGrid'); grid.innerHTML = ''; if (!repositories.length) { grid.innerHTML = '<div class="empty-state"><p>No repos found</p></div>'; return; } repositories.forEach(repo => { const card = document.createElement('div'); card.className = 'repo-card'; card.innerHTML = `<div class="repo-name">${repo.name}</div><div class="repo-description">${repo.description || 'No description'}</div><div class="repo-stats">⭐ ${repo.stargazers_count} ${repo.private ? '🔒' : '🌍'}</div>`; card.addEventListener('click', () => selectRepository(repo, card)); grid.appendChild(card); }); }
+
+    async function selectRepository(repo, card) { document.querySelectorAll('.repo-card').forEach(c => c.classList.remove('active')); card.classList.add('active'); selectedRepo = repo; selectedFile = null; await fetchJSONFiles(repo); document.getElementById('fileSelector').style.display = 'block'; }
+
+    async function fetchJSONFiles(repo) { const res = await fetch(`https://api.github.com/repos/${repo.full_name}/git/trees/${repo.default_branch}?recursive=1`, { headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } }); if (!res.ok) throw new Error('Failed'); const data = await res.json(); const jsons = data.tree.filter(f => f.path.endsWith('.json')); const sel = document.getElementById('fileSelect'); sel.innerHTML = '<option value="">-- Select JSON file --</option>'; jsons.forEach(f => { const opt = document.createElement('option'); opt.value = f.path; opt.textContent = f.path; sel.appendChild(opt); }); if (jsons.length > 0) { sel.value = jsons[0].path; selectedFile = jsons[0].path; await loadFileData(); } }
+
+    document.getElementById('fileSelect').addEventListener('change', async (e) => { selectedFile = e.target.value; if (selectedFile) await loadFileData(); });
+
+    async function loadFileData() { try { document.getElementById('repoStatus').innerHTML = '🔄 Loading...'; const res = await fetch(`https://api.github.com/repos/${selectedRepo.full_name}/contents/${selectedFile}`, { headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } }); if (!res.ok) throw new Error('Failed'); const data = await res.json(); fileSha = data.sha; currentData = JSON.parse(atob(data.content)); displayData(); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); document.getElementById('repoStatus').innerHTML = '✅ Loaded'; switchToTab('devices'); } catch (e) { alert('❌ Error: ' + e.message); } }
+
+    async function saveDataToGitHub(msg = 'Update') { try { document.getElementById('repoStatus').innerHTML = '📤 Saving...'; const content = btoa(unescape(encodeURIComponent(JSON.stringify(currentData, null, 2)))); const res = await fetch(`https://api.github.com/repos/${selectedRepo.full_name}/contents/${selectedFile}`, { method: 'PUT', headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, content, sha: fileSha }) }); if (!res.ok) throw new Error('Failed'); const result = await res.json(); fileSha = result.content.sha; document.getElementById('repoStatus').innerHTML = '✅ Saved'; return true; } catch (e) { alert('❌ Error: ' + e.message); return false; } }
+
+    function displayData(searchTerm = '', highlightId = null) { const list = document.getElementById('dataList'); list.innerHTML = ''; if (Array.isArray(currentData)) allDataArray = currentData; else if (currentData && typeof currentData === 'object') allDataArray = Object.keys(currentData).map(k => ({ id: k, ...currentData[k] })); else allDataArray = []; let total = allDataArray.length, active = 0, expired = 0; allDataArray.forEach(i => { if (isExpired(i.expirydate)) expired++; else active++; }); document.getElementById('totalCount').textContent = total; document.getElementById('activeCount').textContent = active; document.getElementById('expiredCount').textContent = expired; document.getElementById('positionInfo').textContent = `(Total: ${total} keys)`; let filtered = allDataArray; if (currentFilter === 'active') filtered = allDataArray.filter(i => !isExpired(i.expirydate)); else if (currentFilter === 'expired') filtered = allDataArray.filter(i => isExpired(i.expirydate)); if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(i => { const did = (i.device_id || i.id || '').toLowerCase(); const user = (i.user || '').toLowerCase(); const key = (i.key || '').toLowerCase(); return did.includes(s) || user.includes(s) || key.includes(s); }); } if (!filtered.length) { list.innerHTML = `<div class="empty-state"><p>No keys found</p><button onclick="openKeyModal()">➕ Add New Key</button></div>`; return; }
+      filtered.forEach((item) => { const deviceId = item.device_id || item.id || 'Unknown'; const exp = isExpired(item.expirydate); const div = document.createElement('div'); div.className = 'device-card' + (exp ? ' expired' : ''); div.id = `card-${deviceId}`; div.innerHTML = `<div class="device-id">${deviceId}</div><div class="user-name-card">${item.user || 'N/A'}</div><div class="key-value" onclick="copyKey('${item.key || ''}')">${item.key || 'N/A'}</div><div class="meta-row"><span class="expiry-text">${item.expirydate || 'N/A'}</span><span class="status-badge ${item.Allowoffline ? 'offline' : 'online'}">${item.Allowoffline ? 'Offline' : 'Online'}</span></div>${exp ? '<div class="expired-badge">⚠️ EXPIRED</div>' : ''}<div class="card-actions"><button class="action-btn edit" onclick="updateItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn delete" onclick="deleteItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button><button class="action-btn disable" onclick="disableItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button></div>`; list.appendChild(div); if (highlightId && deviceId === highlightId) { setTimeout(() => { scrollToElement(div); highlightElement(div); }, 100); } }); }
+
+    window.updateItem = function(id) { currentUpdateId = id; let item = Array.isArray(currentData) ? currentData.find(e => e.device_id === id || e.id === id) : currentData[id]; if (item) { document.getElementById('deviceId').value = item.device_id || id; document.getElementById('key').value = item.key || ''; document.getElementById('expiry').value = item.expirydate || ''; document.getElementById('username').value = item.user || ''; document.getElementById('allowOffline').checked = item.Allowoffline || false; document.getElementById('positionInput').value = allDataArray.findIndex(x => (x.device_id || x.id) === id) + 1; document.getElementById('modalTitle').innerHTML = '✏️ Update License Key'; openKeyModal(); } }
+
+    window.deleteItem = async function(id) { if (confirm(`Delete key for ${id}?`)) { if (Array.isArray(currentData)) { const idx = currentData.findIndex(i => i.device_id === id || i.id === id); if (idx !== -1) currentData.splice(idx, 1); } else delete currentData[id]; if (await saveDataToGitHub(`Delete ${id}`)) { displayData(); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); showToast('🗑 Deleted!'); } } }
+
+    window.disableItem = async function(id) { if (confirm(`Disable key for ${id}?`)) { let arr = [...allDataArray]; const idx = arr.findIndex(i => (i.device_id === id || i.id === id)); if (idx !== -1) { const parts = (arr[idx].expirydate || '01-01-2026').split('-'); arr[idx].expirydate = `${parts[0]}-${parts[1]}-20`; if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } if (await saveDataToGitHub(`Disable ${id}`)) { displayData('', id); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); showToast('🚫 Disabled!'); } } } }
+
+    document.getElementById('saveBtn').addEventListener('click', async () => { const btn = document.getElementById('saveBtn'); const id = document.getElementById('deviceId').value.trim(); const key = document.getElementById('key').value.trim(); const expiry = document.getElementById('expiry').value.trim(); const user = document.getElementById('username').value.trim(); const allow = document.getElementById('allowOffline').checked; const posVal = document.getElementById('positionInput').value.trim(); if (!id || !key || !expiry || !user) { alert('⚠️ Fill all fields!'); return; } let pos = parseInt(posVal); if (!pos || pos < 1 || pos > allDataArray.length + 1) { alert('⚠️ Invalid position!'); return; } btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> Saving...'; const entry = { device_id: id, key, expirydate: expiry, user, Allowoffline: allow }; let arr = [...allDataArray]; if (currentUpdateId) { const idx = arr.findIndex(i => (i.device_id === currentUpdateId || i.id === currentUpdateId)); if (idx !== -1) arr.splice(idx, 1); } arr.splice(pos - 1, 0, entry); if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } const msg = currentUpdateId ? `Update ${id}` : `Add ${id}`; const result = await saveDataToGitHub(msg); btn.disabled = false; btn.innerHTML = orig; if (result) { document.getElementById('searchInput').value = ''; displayData('', id); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); currentUpdateId = null; closeKeyModal(); showToast('✅ Saved!'); } });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => displayData(e.target.value));
+    document.querySelectorAll('.filter-tab').forEach(tab => { tab.addEventListener('click', () => { document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); currentFilter = tab.dataset.filter; displayData(document.getElementById('searchInput').value); }); });
+    document.querySelectorAll('.sub-tab').forEach(tab => { tab.addEventListener('click', () => { document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('#tab-devices > .tab-content').forEach(c => c.classList.remove('active')); tab.classList.add('active'); document.getElementById(`subtab-${tab.dataset.subtab}`).classList.add('active'); }); });
+
+    document.getElementById('updateFromJsonBtn').addEventListener('click', async () => { try { const parsed = JSON.parse(document.getElementById('rawJsonEditor').value.trim()); if (confirm('Save JSON?')) { currentData = parsed; if (await saveDataToGitHub('JSON Update')) { displayData(); showToast('✅ Saved!'); } } } catch (e) { alert('❌ Invalid JSON!'); } });
+    document.getElementById('formatJsonBtn').addEventListener('click', () => { try { document.getElementById('rawJsonEditor').value = JSON.stringify(JSON.parse(document.getElementById('rawJsonEditor').value.trim()), null, 2); showToast('✨ Formatted!'); } catch (e) { alert('❌ Invalid JSON!'); } });
+    document.getElementById('copyJsonBtn').addEventListener('click', () => { document.getElementById('rawJsonEditor').select(); document.execCommand('copy'); showToast('📋 Copied!'); });
+    document.getElementById('resetJsonBtn').addEventListener('click', () => { if (confirm('Reset?')) { document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); showToast('🔄 Reset!'); } });
+
+    document.getElementById('refreshReposBtn').addEventListener('click', fetchRepositories);
+    document.getElementById('filterBtn').addEventListener('click', () => { const current = localStorage.getItem('repo_filter'); const txt = current ? JSON.parse(current).join(', ') : ''; const nf = prompt('📁 Repository Filter:\n\nComma separated:\nrepo1, repo2\n\nLeave empty for all', txt); if (nf !== null) { if (nf.trim()) { repoFilter = nf.split(/[,\n]/).map(l => l.trim()).filter(l => l.length > 0); localStorage.setItem('repo_filter', JSON.stringify(repoFilter)); } else { repoFilter = []; localStorage.removeItem('repo_filter'); } fetchRepositories(); } });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => { if (confirm('Logout?')) { localStorage.removeItem('github_token'); localStorage.removeItem('repo_filter'); location.reload(); } });
+    window.addEventListener('scroll', () => { document.getElementById('topBtn').style.display = window.scrollY > 200 ? 'flex' : 'none'; });
+
+    document.getElementById('username').addEventListener('input', function() { const v = this.value.toLowerCase(); const sug = document.getElementById('userSuggestions'); sug.innerHTML = ''; if (!v) { sug.classList.remove('show'); return; } const matches = [...new Set(allDataArray.map(x => x.user).filter(u => u && u.toLowerCase().includes(v)))].slice(0, 5); if (!matches.length) { sug.classList.remove('show'); return; } matches.forEach(name => { const d = document.createElement('div'); d.className = 'suggestion-item'; d.textContent = name; d.onclick = () => { document.getElementById('username').value = name; sug.classList.remove('show'); }; sug.appendChild(d); }); sug.classList.add('show'); });
+    document.getElementById('positionInput').addEventListener('input', function() { const v = this.value.toLowerCase(); const sug = document.getElementById('positionSuggestions'); sug.innerHTML = ''; if (!v || /^\d+$/.test(v)) { sug.classList.remove('show'); return; } const matches = allDataArray.filter(i => (i.user || '').toLowerCase().includes(v)).slice(0, 5); if (!matches.length) { sug.classList.remove('show'); return; } matches.forEach(i => { const did = i.device_id || i.id; const pos = allDataArray.findIndex(d => (d.device_id || d.id) === did) + 1; const d = document.createElement('div'); d.className = 'suggestion-item'; d.innerHTML = `<strong>#${pos}</strong> - ${i.user || 'N/A'}`; d.onclick = () => { document.getElementById('positionInput').value = pos; sug.classList.remove('show'); }; sug.appendChild(d); }); sug.classList.add('show'); });
+    document.addEventListener('click', (e) => { if (!document.getElementById('username').contains(e.target)) document.getElementById('userSuggestions').classList.remove('show'); if (!document.getElementById('positionInput').contains(e.target)) document.getElementById('positionSuggestions').classList.remove('show'); });
+
+    setTomorrowExpiry();
+    checkExistingSession();
+  </script>
+</body>
+</html>
