@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no" />
-  <title>Verification Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>OP ADMIN Panel</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -341,6 +341,7 @@
     .device-card.highlight { animation: highlightPulse 0.6s ease-in-out 5; }
 
     .device-id { color: var(--accent); font-size: 11px; font-weight: 700; margin-bottom: 2px; word-break: break-all; line-height: 1.2; }
+    .position-tag { position: absolute; top: 8px; right: 8px; background: var(--accent); color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
     .user-name-card { color: var(--text-secondary); font-size: 11px; font-weight: 500; margin-bottom: 5px; }
     .key-value {
       color: var(--text-primary); font-size: 12px; font-weight: 700; font-family: var(--font-mono);
@@ -439,7 +440,7 @@
 
     .modal-bg {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
-      display: none; align-items: flex-start; justify-content: center; padding: 3vh 10px 20px; z-index: 10000; overflow-y: auto;
+      display: none; align-items: flex-start; justify-content: center; padding: 12vh 10px 20px; z-index: 10000; overflow-y: auto;
     }
     .modal-bg.show { display: flex; }
     .modal-box { width: 100%; max-width: 420px; background: var(--bg-card); border-radius: 16px; overflow: hidden; }
@@ -679,11 +680,66 @@
 
   <div class="toast" id="toast">Copied!</div>
 
+  <!-- Saved Card Popup -->
+  <div class="modal-bg" id="savedCardModal">
+    <div class="modal-box" style="max-width:340px;">
+      <div class="modal-header">
+        <div class="modal-title" id="savedCardTitle">✅ Key Saved!</div>
+        <button class="modal-close" onclick="closeSavedCardModal()">×</button>
+      </div>
+      <div class="modal-body" style="padding:12px;">
+        <div id="savedCardPreview"></div>
+        <button class="modal-save-btn" onclick="closeSavedCardModal()" style="margin-top:12px;width:100%">👍 OK</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let accessToken = null, userData = null, repositories = [], repoFilter = [], selectedRepo = null, selectedFile = null;
     let currentData = {}, currentUpdateId = null, fileSha = null, allDataArray = [], currentFilter = 'all';
 
     function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    
+    function showSavedCard(deviceId, isUpdate) {
+      const item = allDataArray.find(i => (i.device_id || i.id) === deviceId);
+      if (!item) return;
+      const exp = isExpired(item.expirydate);
+      const pos = allDataArray.findIndex(d => (d.device_id || d.id) === deviceId) + 1;
+      document.getElementById('savedCardTitle').innerHTML = isUpdate ? '✅ Key Updated!' : '✅ Key Added!';
+      document.getElementById('savedCardPreview').innerHTML = `
+        <div class="device-card ${exp ? 'expired' : ''}" style="margin:0;position:relative;">
+          <div class="position-tag">#${pos}</div>
+          <div class="device-id">${item.device_id || deviceId}</div>
+          <div class="user-name-card">${item.user || 'N/A'}</div>
+          <div class="key-value" onclick="copyKey('${item.key || ''}')">${item.key || 'N/A'}</div>
+          <div class="meta-row">
+            <span class="expiry-text">${item.expirydate || 'N/A'}</span>
+            <span class="status-badge ${item.Allowoffline ? 'offline' : 'online'}">${item.Allowoffline ? 'Offline' : 'Online'}</span>
+          </div>
+          ${exp ? '<div class="expired-badge">⚠️ EXPIRED</div>' : ''}
+          <div class="card-actions">
+            <button class="action-btn edit" onclick="closeSavedCardModal();updateItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="action-btn delete" onclick="closeSavedCardModal();deleteItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+            <button class="action-btn disable" onclick="closeSavedCardModal();disableItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>`;
+      document.getElementById('savedCardModal').classList.add('show');
+    }
+    
+    window.closeSavedCardModal = function() {
+      document.getElementById('savedCardModal').classList.remove('show');
+      // After closing, scroll to the saved card
+      const preview = document.getElementById('savedCardPreview');
+      const deviceIdEl = preview.querySelector('.device-id');
+      if (deviceIdEl) {
+        const deviceId = deviceIdEl.textContent;
+        const card = document.getElementById(`card-${deviceId}`);
+        if (card) {
+          setTimeout(() => { scrollToElement(card); highlightElement(card); }, 100);
+        }
+      }
+    }
+    
     window.copyKey = function(key) { navigator.clipboard.writeText(key); showToast('✅ Key copied!'); }
 
     function setTomorrowExpiry() { const d = new Date(); d.setDate(d.getDate() + 1); document.getElementById('expiry').value = formatDate(d); }
@@ -732,7 +788,7 @@
     async function saveDataToGitHub(msg = 'Update') { try { document.getElementById('repoStatus').innerHTML = '📤 Saving...'; const content = btoa(unescape(encodeURIComponent(JSON.stringify(currentData, null, 2)))); const res = await fetch(`https://api.github.com/repos/${selectedRepo.full_name}/contents/${selectedFile}`, { method: 'PUT', headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, content, sha: fileSha }) }); if (!res.ok) throw new Error('Failed'); const result = await res.json(); fileSha = result.content.sha; document.getElementById('repoStatus').innerHTML = '✅ Saved'; return true; } catch (e) { alert('❌ Error: ' + e.message); return false; } }
 
     function displayData(searchTerm = '', highlightId = null) { const list = document.getElementById('dataList'); list.innerHTML = ''; if (Array.isArray(currentData)) allDataArray = currentData; else if (currentData && typeof currentData === 'object') allDataArray = Object.keys(currentData).map(k => ({ id: k, ...currentData[k] })); else allDataArray = []; let total = allDataArray.length, active = 0, expired = 0; allDataArray.forEach(i => { if (isExpired(i.expirydate)) expired++; else active++; }); document.getElementById('totalCount').textContent = total; document.getElementById('activeCount').textContent = active; document.getElementById('expiredCount').textContent = expired; document.getElementById('positionInfo').textContent = `(Total: ${total} keys)`; let filtered = allDataArray; if (currentFilter === 'active') filtered = allDataArray.filter(i => !isExpired(i.expirydate)); else if (currentFilter === 'expired') filtered = allDataArray.filter(i => isExpired(i.expirydate)); if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(i => { const did = (i.device_id || i.id || '').toLowerCase(); const user = (i.user || '').toLowerCase(); const key = (i.key || '').toLowerCase(); return did.includes(s) || user.includes(s) || key.includes(s); }); } if (!filtered.length) { list.innerHTML = `<div class="empty-state"><p>No keys found</p><button onclick="openKeyModal()">➕ Add New Key</button></div>`; return; }
-      filtered.forEach((item) => { const deviceId = item.device_id || item.id || 'Unknown'; const exp = isExpired(item.expirydate); const div = document.createElement('div'); div.className = 'device-card' + (exp ? ' expired' : ''); div.id = `card-${deviceId}`; div.innerHTML = `<div class="device-id">${deviceId}</div><div class="user-name-card">${item.user || 'N/A'}</div><div class="key-value" onclick="copyKey('${item.key || ''}')">${item.key || 'N/A'}</div><div class="meta-row"><span class="expiry-text">${item.expirydate || 'N/A'}</span><span class="status-badge ${item.Allowoffline ? 'offline' : 'online'}">${item.Allowoffline ? 'Offline' : 'Online'}</span></div>${exp ? '<div class="expired-badge">⚠️ EXPIRED</div>' : ''}<div class="card-actions"><button class="action-btn edit" onclick="updateItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn delete" onclick="deleteItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button><button class="action-btn disable" onclick="disableItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button></div>`; list.appendChild(div); if (highlightId && deviceId === highlightId) { setTimeout(() => { scrollToElement(div); highlightElement(div); }, 100); } }); }
+      filtered.forEach((item) => { const deviceId = item.device_id || item.id || 'Unknown'; const exp = isExpired(item.expirydate); const pos = allDataArray.findIndex(d => (d.device_id || d.id) === deviceId) + 1; const div = document.createElement('div'); div.className = 'device-card' + (exp ? ' expired' : ''); div.id = `card-${deviceId}`; div.innerHTML = `<div class="position-tag">#${pos}</div><div class="device-id">${deviceId}</div><div class="user-name-card">${item.user || 'N/A'}</div><div class="key-value" onclick="copyKey('${item.key || ''}')">${item.key || 'N/A'}</div><div class="meta-row"><span class="expiry-text">${item.expirydate || 'N/A'}</span><span class="status-badge ${item.Allowoffline ? 'offline' : 'online'}">${item.Allowoffline ? 'Offline' : 'Online'}</span></div>${exp ? '<div class="expired-badge">⚠️ EXPIRED</div>' : ''}<div class="card-actions"><button class="action-btn edit" onclick="updateItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn delete" onclick="deleteItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button><button class="action-btn disable" onclick="disableItem('${deviceId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button></div>`; list.appendChild(div); if (highlightId && deviceId === highlightId) { setTimeout(() => { scrollToElement(div); highlightElement(div); }, 100); } }); }
 
     window.updateItem = function(id) { currentUpdateId = id; let item = Array.isArray(currentData) ? currentData.find(e => e.device_id === id || e.id === id) : currentData[id]; if (item) { document.getElementById('deviceId').value = item.device_id || id; document.getElementById('key').value = item.key || ''; document.getElementById('expiry').value = item.expirydate || ''; document.getElementById('username').value = item.user || ''; document.getElementById('allowOffline').checked = item.Allowoffline || false; document.getElementById('positionInput').value = allDataArray.findIndex(x => (x.device_id || x.id) === id) + 1; document.getElementById('modalTitle').innerHTML = '✏️ Update License Key'; openKeyModal(); } }
 
@@ -740,7 +796,7 @@
 
     window.disableItem = async function(id) { if (confirm(`Disable key for ${id}?`)) { let arr = [...allDataArray]; const idx = arr.findIndex(i => (i.device_id === id || i.id === id)); if (idx !== -1) { const parts = (arr[idx].expirydate || '01-01-2026').split('-'); arr[idx].expirydate = `${parts[0]}-${parts[1]}-20`; if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } if (await saveDataToGitHub(`Disable ${id}`)) { displayData('', id); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); showToast('🚫 Disabled!'); } } } }
 
-    document.getElementById('saveBtn').addEventListener('click', async () => { const btn = document.getElementById('saveBtn'); const id = document.getElementById('deviceId').value.trim(); const key = document.getElementById('key').value.trim(); const expiry = document.getElementById('expiry').value.trim(); const user = document.getElementById('username').value.trim(); const allow = document.getElementById('allowOffline').checked; const posVal = document.getElementById('positionInput').value.trim(); if (!id || !key || !expiry || !user) { alert('⚠️ Fill all fields!'); return; } let pos = parseInt(posVal); if (!pos || pos < 1 || pos > allDataArray.length + 1) { alert('⚠️ Invalid position!'); return; } btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> Saving...'; const entry = { device_id: id, key, expirydate: expiry, user, Allowoffline: allow }; let arr = [...allDataArray]; if (currentUpdateId) { const idx = arr.findIndex(i => (i.device_id === currentUpdateId || i.id === currentUpdateId)); if (idx !== -1) arr.splice(idx, 1); } arr.splice(pos - 1, 0, entry); if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } const msg = currentUpdateId ? `Update ${id}` : `Add ${id}`; const result = await saveDataToGitHub(msg); btn.disabled = false; btn.innerHTML = orig; if (result) { document.getElementById('searchInput').value = ''; displayData('', id); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); currentUpdateId = null; closeKeyModal(); showToast('✅ Saved!'); } });
+    document.getElementById('saveBtn').addEventListener('click', async () => { const btn = document.getElementById('saveBtn'); const id = document.getElementById('deviceId').value.trim(); const key = document.getElementById('key').value.trim(); const expiry = document.getElementById('expiry').value.trim(); const user = document.getElementById('username').value.trim(); const allow = document.getElementById('allowOffline').checked; const posVal = document.getElementById('positionInput').value.trim(); if (!id || !key || !expiry || !user) { alert('⚠️ Fill all fields!'); return; } let pos = parseInt(posVal); if (!pos || pos < 1 || pos > allDataArray.length + 1) { alert('⚠️ Invalid position!'); return; } btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> Saving...'; const entry = { device_id: id, key, expirydate: expiry, user, Allowoffline: allow }; let arr = [...allDataArray]; if (currentUpdateId) { const idx = arr.findIndex(i => (i.device_id === currentUpdateId || i.id === currentUpdateId)); if (idx !== -1) arr.splice(idx, 1); } arr.splice(pos - 1, 0, entry); if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } const msg = currentUpdateId ? `Update ${id}` : `Add ${id}`; const wasUpdate = !!currentUpdateId; const result = await saveDataToGitHub(msg); btn.disabled = false; btn.innerHTML = orig; if (result) { document.getElementById('searchInput').value = ''; displayData('', null); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); currentUpdateId = null; closeKeyModal(); showSavedCard(id, wasUpdate); } });
 
     document.getElementById('searchInput').addEventListener('input', (e) => displayData(e.target.value));
     document.querySelectorAll('.filter-tab').forEach(tab => { tab.addEventListener('click', () => { document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); currentFilter = tab.dataset.filter; displayData(document.getElementById('searchInput').value); }); });
