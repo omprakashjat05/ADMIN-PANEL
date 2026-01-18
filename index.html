@@ -1099,6 +1099,8 @@
     document.getElementById('positionInput').addEventListener('input', function() { const v = this.value.toLowerCase(); const sug = document.getElementById('positionSuggestions'); sug.innerHTML = ''; if (!v || /^\d+$/.test(v)) { sug.classList.remove('show'); return; } const matches = allDataArray.filter(i => (i.user || '').toLowerCase().includes(v)).slice(0, 5); if (!matches.length) { sug.classList.remove('show'); return; } matches.forEach(i => { const did = i.device_id || i.id; const pos = allDataArray.findIndex(d => (d.device_id || d.id) === did) + 1; const d = document.createElement('div'); d.className = 'suggestion-item'; d.innerHTML = `<strong>#${pos}</strong> - ${i.user || 'N/A'}`; d.onclick = () => { document.getElementById('positionInput').value = pos; sug.classList.remove('show'); }; sug.appendChild(d); }); sug.classList.add('show'); });
     document.addEventListener('click', (e) => { if (!document.getElementById('username').contains(e.target)) document.getElementById('userSuggestions').classList.remove('show'); if (!document.getElementById('positionInput').contains(e.target)) document.getElementById('positionSuggestions').classList.remove('show'); });
 
+    // Check for existing session on page load
+    checkExistingSession();
 
   </script>
 </body>
