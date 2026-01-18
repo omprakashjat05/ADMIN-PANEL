@@ -443,11 +443,11 @@
       display: none; align-items: flex-start; justify-content: center; padding: 12vh 10px 20px; z-index: 10000; overflow-y: auto;
     }
     .modal-bg.show { display: flex; }
-    .modal-box { width: 100%; max-width: 420px; background: var(--bg-card); border-radius: 16px; overflow: hidden; }
-    .modal-header { padding: 14px 16px; background: var(--header-bg); display: flex; justify-content: space-between; align-items: center; }
+    .modal-box { width: 100%; max-width: 420px; background: var(--bg-card); border-radius: 16px; overflow: visible; }
+    .modal-header { padding: 14px 16px; background: var(--header-bg); display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; }
     .modal-title { font-size: 14px; font-weight: 600; color: white; }
     .modal-close { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 16px; cursor: pointer; }
-    .modal-body { padding: 16px; background: var(--bg-card); }
+    .modal-body { padding: 16px; background: var(--bg-card); border-radius: 0 0 16px 16px; }
 
     .modal-input-group { margin-bottom: 12px; }
     .modal-input-group label { display: block; color: var(--accent); font-weight: 600; margin-bottom: 5px; font-size: 11px; }
@@ -477,9 +477,31 @@
     .empty-state p { font-size: 13px; margin-bottom: 12px; }
     .empty-state button { padding: 12px 24px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); border: none; border-radius: 25px; font-weight: 700; color: #111; cursor: pointer; font-family: var(--font-main); font-size: 13px; }
 
-    .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-radius: 8px; max-height: 120px; overflow-y: auto; z-index: 100; display: none; }
+    .suggestions { 
+      position: absolute; 
+      top: 100%; 
+      left: 0; 
+      right: 0; 
+      background: var(--bg-input); 
+      border: 2px solid var(--accent); 
+      border-radius: 8px; 
+      max-height: 150px; 
+      overflow-y: auto; 
+      z-index: 1000; 
+      display: none; 
+      margin-top: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
     .suggestions.show { display: block; }
-    .suggestion-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 11px; }
+    .suggestion-item { 
+      padding: 10px 12px; 
+      cursor: pointer; 
+      border-bottom: 1px solid var(--border); 
+      font-size: 12px; 
+      color: var(--text-primary);
+      transition: background 0.2s;
+    }
+    .suggestion-item:last-child { border-bottom: none; }
     .suggestion-item:hover { background: var(--accent-light); }
 
     .tab-content { display: none; }
@@ -499,7 +521,145 @@
     .theme-starter-max { background: linear-gradient(135deg, #00f5ff, #0080ff); color: #111; }
     .theme-starter-developer { background: linear-gradient(135deg, #00ff41, #00aa2a); color: #111; }
     .theme-starter-developer-pro { background: linear-gradient(135deg, #bf00ff, #8000aa); color: white; }
-  </style>
+/* ===============================
+   FINAL MODAL CSS (REPLACE ALL)
+   =============================== */
+
+/* Modal outer spacing */
+#keyModal.modal-bg {
+  padding: 6vh 16px 20px;
+}
+
+/* Modal inner spacing */
+#keyModal .modal-body {
+  padding: 16px 20px;
+}
+
+/* Input groups spacing */
+#keyModal .modal-input-group {
+  margin-bottom: 14px;
+}
+
+/* User Name + Position row */
+#keyModal .modal-row {
+  display: flex;
+  gap: 12px;
+}
+
+#keyModal .modal-row .modal-input-group {
+  flex: 1;
+}
+
+/* Expiry / buttons inline row */
+#keyModal .expiry-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Expiry input width */
+#keyModal .expiry-inline .modal-input {
+  flex: 2.2;
+}
+
+/* Quick buttons size */
+#keyModal .expiry-inline .quick-btn {
+  flex: 1;
+  height: 42px;
+}
+
+/* Allow Offline checkbox fix */
+#keyModal label.checkbox-label,
+#keyModal label.inline-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 42px;
+  padding: 0 12px;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+#keyModal label.checkbox-label input[type="checkbox"] {
+  margin: 0;
+  align-self: center;
+}
+
+/* Bottom buttons */
+#keyModal .modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+#keyModal .modal-save-btn {
+  flex: 2;
+  height: 46px;
+}
+
+#keyModal .modal-cancel-btn {
+  flex: 1;
+  height: 46px;
+}
+/* ===== FINAL POSITION & MARGIN FIX ===== */
+
+/* Dialog outer spacing (LEFT–RIGHT + TOP) */
+#keyModal.modal-bg {
+  padding-top: 4vh !important;      /* ⬆️ upar ka margin kam */
+  padding-left: 22px !important;    /* ⬅️ left margin */
+  padding-right: 22px !important;   /* ➡️ right margin */
+  padding-bottom: 20px !important;
+}
+
+/* Modal box width limit (taaki sides dikhen) */
+#keyModal .modal-box {
+  width: 100%;
+  max-width: 420px;   /* ⭐ yahin se side margin feel aata hai */
+  margin: 0 auto;
+}
+
+/* ===== HEIGHT COMPACT FIX ===== */
+
+/* Dialog top position (aur upar lao) */
+#keyModal.modal-bg {
+  padding-top: 2.5vh !important;   /* pehle 4vh tha */
+  padding-bottom: 12px !important;
+}
+
+/* Dialog ke andar vertical space kam */
+#keyModal .modal-body {
+  padding: 12px 18px !important;   /* upar-neeche kam */
+}
+
+/* Har input group ke beech gap kam */
+#keyModal .modal-input-group {
+  margin-bottom: 10px !important;
+}
+
+/* Inputs thode chhote */
+#keyModal .modal-input {
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+}
+
+/* Expiry row / buttons ki height kam */
+#keyModal .expiry-inline .quick-btn,
+#keyModal .modal-save-btn,
+#keyModal .modal-cancel-btn {
+  height: 38px !important;   /* pehle 42–46 tha */
+}
+
+/* Allow Offline row compact */
+#keyModal label.checkbox-label {
+  height: 38px !important;
+  padding: 0 10px !important;
+}
+
+/* Bottom buttons ka gap kam */
+#keyModal .modal-buttons {
+  margin-top: 10px !important;
+}
+</style>
 </head>
 <body data-theme="starter">
 
@@ -624,70 +784,100 @@
   <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⇧</button>
 
   <div class="modal-bg" id="keyModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-title" id="modalTitle">➕ Add License Key</div>
-        <button class="modal-close" onclick="closeKeyModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-input-group">
-          <label>📱 Device ID</label>
-          <input id="deviceId" placeholder="Enter device ID" type="text" class="modal-input" />
-          <div id="deviceIdWarning" style="display:none;margin-top:8px;padding:10px;background:#fff3e0;border:1px solid #ff9800;border-radius:8px;font-size:11px;">
-            <span style="color:#e65100;">⚠️ Key already exists for this Device ID!</span>
-            <button onclick="locateExistingDevice()" style="margin-left:8px;padding:4px 10px;background:#ff9800;color:white;border:none;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;">📍 Locate</button>
-          </div>
-        </div>
-        <div class="modal-input-group">
-          <label>🔑 License Key</label>
-          <div style="display:flex;gap:6px;">
-            <input id="key" placeholder="Enter or generate key" type="text" class="modal-input" style="flex:1;" />
-            <button class="quick-btn" onclick="generateRandomKey()" style="flex:0 0 45px;">🎲</button>
-          </div>
-          <div id="keyWarning" style="display:none;margin-top:8px;padding:10px;background:#ffebee;border:1px solid #e74c3c;border-radius:8px;font-size:11px;color:#c0392b;">
-            ⚠️ Key already exists! Enter another key.
-          </div>
-        </div>
-        <div class="modal-input-group">
-          <label>📅 Expiry Date</label>
-          <input id="expiry" placeholder="dd-mm-yyyy" type="text" class="modal-input" />
-          <div class="quick-btns">
-            <button class="quick-btn" onclick="setQuickDate(7)">7d</button>
-            <button class="quick-btn" onclick="setQuickDate(15)">15d</button>
-            <button class="quick-btn" onclick="setQuickDate(30)">30d</button>
-            <button class="quick-btn" onclick="adjustExpiry(-1)">−1</button>
-            <button class="quick-btn" onclick="adjustExpiry(1)">+1</button>
-          </div>
-        </div>
-        <div class="modal-input-group">
-          <label class="checkbox-label"><input id="allowOffline" type="checkbox" /><span>✓ Allow Offline</span></label>
-        </div>
-        <div class="modal-row">
-          <div class="modal-input-group" style="position:relative;">
-            <label>👤 User Name</label>
-            <input id="username" placeholder="User name" type="text" class="modal-input" />
-            <div id="userSuggestions" class="suggestions"></div>
-          </div>
-          <div class="modal-input-group" style="position:relative;">
-            <label>📍 Position</label>
-           <input
-  id="positionInput"
-  type="text"
-  class="modal-input"
-  value="5"
-  autocomplete="off"
-/>
-            <div id="positionSuggestions" class="suggestions"></div>
-          </div>
-        </div>
-        <span id="positionInfo" style="color:var(--text-secondary);font-size:10px;">(Total: 0 keys)</span>
-        <div class="modal-buttons">
-          <button class="modal-save-btn" id="saveBtn">💾 Save to GitHub</button>
-          <button class="modal-cancel-btn" onclick="closeKeyModal()">✕ Cancel</button>
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">➕ Add License Key</div>
+      <button class="modal-close" onclick="closeKeyModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Device ID -->
+      <div class="modal-input-group">
+        <label>📱 Device ID</label>
+        <input id="deviceId" placeholder="Enter device ID" type="text" class="modal-input" />
+
+        <div id="deviceIdWarning" style="display:none;margin-top:8px;padding:10px;background:#fff3e0;border:1px solid #ff9800;border-radius:8px;font-size:11px;">
+          <span style="color:#e65100;">⚠️ Key already exists for this Device ID!</span>
+          <button onclick="locateExistingDevice()"
+            style="margin-left:8px;padding:4px 10px;background:#ff9800;color:white;border:none;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;">
+            📍 Locate
+          </button>
         </div>
       </div>
+
+      <!-- License Key -->
+      <div class="modal-input-group">
+        <label>🔑 License Key</label>
+        <div style="display:flex;gap:8px;">
+          <input id="key" placeholder="Enter or generate key" type="text" class="modal-input" style="flex:1;" />
+          <button
+  class="quick-btn"
+  onclick="generateRandomKey()"
+  style="flex:0 0 125px; font-size:18px;"
+>
+  🎲
+</button>
+        </div>
+
+        <div id="keyWarning" style="display:none;margin-top:8px;padding:10px;background:#ffebee;border:1px solid #e74c3c;border-radius:8px;font-size:11px;color:#c0392b;">
+          ⚠️ Key already exists! Enter another key.
+        </div>
+      </div>
+
+      <!-- Expiry -->
+     <div class="modal-input-group">
+  <label>📅 Expiry Date</label>
+
+  <div class="expiry-inline">
+    <input id="expiry" placeholder="dd-mm-yyyy" type="text" class="modal-input" />
+
+    <button class="quick-btn" onclick="setQuickDate(7)">7d</button>
+    <button class="quick-btn" onclick="setQuickDate(15)">15d</button>
+    <button class="quick-btn" onclick="setQuickDate(30)">30d</button>
+  </div>
+</div>
+
+        <div class="modal-input-group">
+  <div class="expiry-inline">
+    <button class="quick-btn" onclick="adjustExpiry(-1)">−1</button>
+    <button class="quick-btn" onclick="adjustExpiry(1)">+1</button>
+
+    <label class="checkbox-label inline-checkbox">
+      <input id="allowOffline" type="checkbox" />
+      <span>✓ Allow Offline</span>
+    </label>
+  </div>
+</div>
+
+      <!-- User + Position -->
+      <div class="modal-row">
+        <div class="modal-input-group" style="position:relative;">
+          <label>👤 User Name</label>
+          <input id="username" placeholder="User name" type="text" class="modal-input" autocomplete="off" />
+          <div id="userSuggestions" class="suggestions"></div>
+        </div>
+
+        <div class="modal-input-group" style="position:relative;">
+          <label>📍 Position</label>
+          <input id="positionInput" placeholder="#" type="text" class="modal-input" autocomplete="off" />
+          <div id="positionSuggestions" class="suggestions"></div>
+        </div>
+      </div>
+
+      <span id="positionInfo" style="display:block;margin:6px 0;color:var(--text-secondary);font-size:10px;">
+        (Total: 0 keys)
+      </span>
+
+      <!-- Buttons -->
+      <div class="modal-buttons">
+        <button class="modal-save-btn" id="saveBtn">💾 Save to GitHub</button>
+        <button class="modal-cancel-btn" onclick="closeKeyModal()">✕ Cancel</button>
+      </div>
+
     </div>
   </div>
+</div>
 
   <div class="toast" id="toast">Copied!</div>
 
@@ -878,23 +1068,7 @@
     document.getElementById('positionInput').addEventListener('input', function() { const v = this.value.toLowerCase(); const sug = document.getElementById('positionSuggestions'); sug.innerHTML = ''; if (!v || /^\d+$/.test(v)) { sug.classList.remove('show'); return; } const matches = allDataArray.filter(i => (i.user || '').toLowerCase().includes(v)).slice(0, 5); if (!matches.length) { sug.classList.remove('show'); return; } matches.forEach(i => { const did = i.device_id || i.id; const pos = allDataArray.findIndex(d => (d.device_id || d.id) === did) + 1; const d = document.createElement('div'); d.className = 'suggestion-item'; d.innerHTML = `<strong>#${pos}</strong> - ${i.user || 'N/A'}`; d.onclick = () => { document.getElementById('positionInput').value = pos; sug.classList.remove('show'); }; sug.appendChild(d); }); sug.classList.add('show'); });
     document.addEventListener('click', (e) => { if (!document.getElementById('username').contains(e.target)) document.getElementById('userSuggestions').classList.remove('show'); if (!document.getElementById('positionInput').contains(e.target)) document.getElementById('positionSuggestions').classList.remove('show'); });
 
-    setTomorrowExpiry();
-    checkExistingSession();
-    const input = document.getElementById("positionInput");
 
-  // Jab input pe click / focus ho
-  input.addEventListener("focus", () => {
-    if (input.value === "5") {
-      input.value = "";
-    }
-  });
-
-  // Jab input se bahar click ho
-  input.addEventListener("blur", () => {
-    if (input.value.trim() === "") {
-      input.value = "5";
-    }
-  });
   </script>
 </body>
 </html>
