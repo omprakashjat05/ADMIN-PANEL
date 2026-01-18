@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>OP ADMIN Panel</title>
+  <title>RMO Verification Panel</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -506,7 +506,7 @@
   <div class="header">
     <h1>
       <svg class="header-logo" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-      OP ADMIN Panel
+      RMO Panel
     </h1>
     <div class="user-info" id="userInfo" style="display:none;">
       <div class="user-details">
@@ -635,12 +635,19 @@
         <div class="modal-input-group">
           <label>📱 Device ID</label>
           <input id="deviceId" placeholder="Enter device ID" type="text" class="modal-input" />
+          <div id="deviceIdWarning" style="display:none;margin-top:8px;padding:10px;background:#fff3e0;border:1px solid #ff9800;border-radius:8px;font-size:11px;">
+            <span style="color:#e65100;">⚠️ Key already exists for this Device ID!</span>
+            <button onclick="locateExistingDevice()" style="margin-left:8px;padding:4px 10px;background:#ff9800;color:white;border:none;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;">📍 Locate</button>
+          </div>
         </div>
         <div class="modal-input-group">
           <label>🔑 License Key</label>
           <div style="display:flex;gap:6px;">
             <input id="key" placeholder="Enter or generate key" type="text" class="modal-input" style="flex:1;" />
             <button class="quick-btn" onclick="generateRandomKey()" style="flex:0 0 45px;">🎲</button>
+          </div>
+          <div id="keyWarning" style="display:none;margin-top:8px;padding:10px;background:#ffebee;border:1px solid #e74c3c;border-radius:8px;font-size:11px;color:#c0392b;">
+            ⚠️ Key already exists! Enter another key.
           </div>
         </div>
         <div class="modal-input-group">
@@ -689,7 +696,7 @@
       </div>
       <div class="modal-body" style="padding:12px;">
         <div id="savedCardPreview"></div>
-        <button class="modal-save-btn" onclick="closeSavedCardModal()" style="margin-top:12px;width:100%">👍 OK</button>
+        <button class="modal-save-btn" onclick="closeSavedCardModal()" style="margin-top:12px;">👍 OK</button>
       </div>
     </div>
   </div>
@@ -747,12 +754,62 @@
     window.setQuickDate = function(days) { const d = new Date(); d.setDate(d.getDate() + days); document.getElementById('expiry').value = formatDate(d); }
     window.adjustExpiry = function(days) { const input = document.getElementById('expiry'); if (!input.value) return; const parts = input.value.split('-'); if (parts.length !== 3) return; const d = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0])); if (isNaN(d.getTime())) return; d.setDate(d.getDate() + days); input.value = formatDate(d); }
 
-    window.generateRandomKey = function() { const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; const existing = allDataArray.map(x => x.key); let key = ""; const lens = [11, 12, 13]; do { const len = lens[Math.floor(Math.random() * lens.length)]; key = ""; for (let i = 0; i < len; i++) key += chars.charAt(Math.floor(Math.random() * chars.length)); } while (existing.includes(key)); document.getElementById('key').value = key; }
+    window.generateRandomKey = function() { const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; const existing = allDataArray.map(x => x.key); let key = ""; const lens = [11, 12, 13]; do { const len = lens[Math.floor(Math.random() * lens.length)]; key = ""; for (let i = 0; i < len; i++) key += chars.charAt(Math.floor(Math.random() * chars.length)); } while (existing.includes(key)); document.getElementById('key').value = key; checkKeyDuplicate(); }
+
+    let existingDeviceId = null;
+    
+    function checkDeviceIdDuplicate() {
+      const deviceId = document.getElementById('deviceId').value.trim();
+      const warning = document.getElementById('deviceIdWarning');
+      if (!deviceId || currentUpdateId) { warning.style.display = 'none'; existingDeviceId = null; return; }
+      const exists = allDataArray.find(i => (i.device_id || i.id) === deviceId);
+      if (exists) { warning.style.display = 'block'; existingDeviceId = deviceId; } 
+      else { warning.style.display = 'none'; existingDeviceId = null; }
+    }
+    
+    function checkKeyDuplicate() {
+      const key = document.getElementById('key').value.trim();
+      const deviceId = document.getElementById('deviceId').value.trim();
+      const warning = document.getElementById('keyWarning');
+      if (!key) { warning.style.display = 'none'; return false; }
+      const exists = allDataArray.find(i => i.key === key && (i.device_id || i.id) !== deviceId && (i.device_id || i.id) !== currentUpdateId);
+      if (exists) { warning.style.display = 'block'; return true; } 
+      else { warning.style.display = 'none'; return false; }
+    }
+    
+    window.locateExistingDevice = function() {
+      if (existingDeviceId) {
+        const deviceIdToFind = existingDeviceId;
+        closeKeyModal();
+        setTimeout(() => {
+          // Make sure we're on devices tab
+          switchToTab('devices');
+          // Clear search to show all cards
+          document.getElementById('searchInput').value = '';
+          // Reset filter to all
+          document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+          document.querySelector('.filter-tab[data-filter="all"]').classList.add('active');
+          currentFilter = 'all';
+          displayData();
+          // Now find and highlight the card
+          setTimeout(() => {
+            const card = document.getElementById(`card-${deviceIdToFind}`);
+            if (card) { 
+              scrollToElement(card); 
+              highlightElement(card); 
+            }
+          }, 100);
+        }, 350);
+      }
+    }
+    
+    document.getElementById('deviceId').addEventListener('input', checkDeviceIdDuplicate);
+    document.getElementById('key').addEventListener('input', checkKeyDuplicate);
 
     window.switchToTab = function(tab) { document.querySelectorAll('#mainPanel > .tab-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.getElementById('navDevices').classList.toggle('active', tab === 'devices'); document.getElementById('navSettings').classList.toggle('active', tab === 'settings'); }
 
     window.openKeyModal = function() { document.getElementById('keyModal').classList.add('show'); document.body.style.overflow = 'hidden'; if (!currentUpdateId) { document.getElementById('modalTitle').innerHTML = '➕ Add License Key'; setTomorrowExpiry(); } }
-    window.closeKeyModal = function() { document.getElementById('keyModal').classList.remove('show'); document.body.style.overflow = ''; setTimeout(() => { if (!document.getElementById('keyModal').classList.contains('show')) { document.getElementById('deviceId').value = ''; document.getElementById('key').value = ''; setTomorrowExpiry(); document.getElementById('username').value = ''; document.getElementById('allowOffline').checked = false; document.getElementById('positionInput').value = ''; document.getElementById('modalTitle').innerHTML = '➕ Add License Key'; currentUpdateId = null; } }, 300); }
+    window.closeKeyModal = function() { document.getElementById('keyModal').classList.remove('show'); document.body.style.overflow = ''; setTimeout(() => { if (!document.getElementById('keyModal').classList.contains('show')) { document.getElementById('deviceId').value = ''; document.getElementById('key').value = ''; setTomorrowExpiry(); document.getElementById('username').value = ''; document.getElementById('allowOffline').checked = false; document.getElementById('positionInput').value = ''; document.getElementById('modalTitle').innerHTML = '➕ Add License Key'; document.getElementById('deviceIdWarning').style.display = 'none'; document.getElementById('keyWarning').style.display = 'none'; existingDeviceId = null; currentUpdateId = null; } }, 300); }
 
     function isExpired(expiryDate) { if (!expiryDate) return false; try { const parts = expiryDate.split('-'); if (parts.length !== 3) return false; const expiry = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0])); const today = new Date(); today.setHours(0,0,0,0); return expiry <= today; } catch (e) { return false; } }
 
@@ -796,7 +853,7 @@
 
     window.disableItem = async function(id) { if (confirm(`Disable key for ${id}?`)) { let arr = [...allDataArray]; const idx = arr.findIndex(i => (i.device_id === id || i.id === id)); if (idx !== -1) { const parts = (arr[idx].expirydate || '01-01-2026').split('-'); arr[idx].expirydate = `${parts[0]}-${parts[1]}-20`; if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } if (await saveDataToGitHub(`Disable ${id}`)) { displayData('', id); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); showToast('🚫 Disabled!'); } } } }
 
-    document.getElementById('saveBtn').addEventListener('click', async () => { const btn = document.getElementById('saveBtn'); const id = document.getElementById('deviceId').value.trim(); const key = document.getElementById('key').value.trim(); const expiry = document.getElementById('expiry').value.trim(); const user = document.getElementById('username').value.trim(); const allow = document.getElementById('allowOffline').checked; const posVal = document.getElementById('positionInput').value.trim(); if (!id || !key || !expiry || !user) { alert('⚠️ Fill all fields!'); return; } let pos = parseInt(posVal); if (!pos || pos < 1 || pos > allDataArray.length + 1) { alert('⚠️ Invalid position!'); return; } btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> Saving...'; const entry = { device_id: id, key, expirydate: expiry, user, Allowoffline: allow }; let arr = [...allDataArray]; if (currentUpdateId) { const idx = arr.findIndex(i => (i.device_id === currentUpdateId || i.id === currentUpdateId)); if (idx !== -1) arr.splice(idx, 1); } arr.splice(pos - 1, 0, entry); if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } const msg = currentUpdateId ? `Update ${id}` : `Add ${id}`; const wasUpdate = !!currentUpdateId; const result = await saveDataToGitHub(msg); btn.disabled = false; btn.innerHTML = orig; if (result) { document.getElementById('searchInput').value = ''; displayData('', null); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); currentUpdateId = null; closeKeyModal(); showSavedCard(id, wasUpdate); } });
+    document.getElementById('saveBtn').addEventListener('click', async () => { const btn = document.getElementById('saveBtn'); const id = document.getElementById('deviceId').value.trim(); const key = document.getElementById('key').value.trim(); const expiry = document.getElementById('expiry').value.trim(); const user = document.getElementById('username').value.trim(); const allow = document.getElementById('allowOffline').checked; const posVal = document.getElementById('positionInput').value.trim(); if (!id || !key || !expiry || !user) { alert('⚠️ Fill all fields!'); return; } if (checkKeyDuplicate()) { alert('⚠️ Key already exists! Please enter another key.'); return; } let pos = parseInt(posVal); if (!pos || pos < 1 || pos > allDataArray.length + 1) { alert('⚠️ Invalid position!'); return; } btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> Saving...'; const entry = { device_id: id, key, expirydate: expiry, user, Allowoffline: allow }; let arr = [...allDataArray]; if (currentUpdateId) { const idx = arr.findIndex(i => (i.device_id === currentUpdateId || i.id === currentUpdateId)); if (idx !== -1) arr.splice(idx, 1); } arr.splice(pos - 1, 0, entry); if (Array.isArray(currentData)) currentData = arr; else { const obj = {}; arr.forEach(i => { const did = i.device_id || i.id; obj[did] = { device_id: did, key: i.key, expirydate: i.expirydate, user: i.user, Allowoffline: i.Allowoffline }; }); currentData = obj; } const msg = currentUpdateId ? `Update ${id}` : `Add ${id}`; const wasUpdate = !!currentUpdateId; const result = await saveDataToGitHub(msg); btn.disabled = false; btn.innerHTML = orig; if (result) { document.getElementById('searchInput').value = ''; displayData('', null); document.getElementById('rawJsonEditor').value = JSON.stringify(currentData, null, 2); currentUpdateId = null; closeKeyModal(); showSavedCard(id, wasUpdate); } });
 
     document.getElementById('searchInput').addEventListener('input', (e) => displayData(e.target.value));
     document.querySelectorAll('.filter-tab').forEach(tab => { tab.addEventListener('click', () => { document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); currentFilter = tab.dataset.filter; displayData(document.getElementById('searchInput').value); }); });
