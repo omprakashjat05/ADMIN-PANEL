@@ -670,7 +670,13 @@
           </div>
           <div class="modal-input-group" style="position:relative;">
             <label>📍 Position</label>
-            <input id="positionInput" placeholder="#" type="text" class="modal-input" autocomplete="off" />
+           <input
+  id="positionInput"
+  type="text"
+  class="modal-input"
+  value="5"
+  autocomplete="off"
+/>
             <div id="positionSuggestions" class="suggestions"></div>
           </div>
         </div>
@@ -874,6 +880,21 @@
 
     setTomorrowExpiry();
     checkExistingSession();
+    const input = document.getElementById("positionInput");
+
+  // Jab input pe click / focus ho
+  input.addEventListener("focus", () => {
+    if (input.value === "5") {
+      input.value = "";
+    }
+  });
+
+  // Jab input se bahar click ho
+  input.addEventListener("blur", () => {
+    if (input.value.trim() === "") {
+      input.value = "5";
+    }
+  });
   </script>
 </body>
 </html>
